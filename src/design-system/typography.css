@@ -7,7 +7,7 @@
    Lora weights:  400 regular, 400 italic, 700 regular
    ============================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400;1,500&display=swap');
 
 /* =============================================================
    BASE RESET
@@ -206,7 +206,8 @@ p {
   font-weight: var(--weight-bold);
   line-height: 1;
   border-radius: var(--radius-full);
-  padding: 6px 16px;
+  min-height: var(--touch-target);
+  padding: var(--pill-padding-y) var(--pill-padding-x);
   cursor: pointer;
   display: inline-flex;
   align-items: center;

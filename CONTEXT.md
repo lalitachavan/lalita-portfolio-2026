@@ -11,54 +11,73 @@ Update it at the end of every session.
 
 All four files complete:
 
-- **`tokens.css`** — CSS custom properties on `:root`. Covers colors, typography, spacing, border radius, borders, animation durations/easings, layout, mascot, dots. Fonts loaded via `typography.css` — no `<link>` in `index.html` (only preconnect hints there).
+- **`tokens.css`** — CSS custom properties on `:root`. Covers colors, typography, spacing, border radius, borders, animation durations/easings, layout, mascot, dots. Fonts loaded via `typography.css` — only preconnect hints in `index.html`.
 - **`tokens.js`** — JS exports matching `tokens.css` exactly. Named exports: `colors`, `typography`, `spacing`, `borderRadius`, `borders`, `animation`, `components`, `layout`. Also exports `getPanelTokens(color)` and `isLightPanel(color)` helpers. Default export used in `tailwind.config.js`.
-- **`typography.css`** — Single Google Fonts `@import` for Geist (400/600/700) + Lora (400/400i/700). Base reset, all type classes: `.hero-line-1`, `.hero-line-2`, `.annotation`, `.nav-link`, `.tag`, `.label`, `.caption`, `.panel-title`, `.panel-desc`, `.panel-tag`, `.panel-label`, `.pill`.
-- **`components.css`** — `.focus-light`/`.focus-dark`, hero layout, brush stroke animation, annotation reveal, accordion (desktop + mobile), panel label rotation, nav dots, pill button, mascot peek animation.
+- **`typography.css`** — Single Google Fonts `@import` for Geist (400/600/700) + Lora (400/400i/500i/700). Base reset, all type classes.
+- **`components.css`** — Page layout, nav, hero layout, brush stroke animation, annotation reveal, accordion (desktop + mobile), panel label rotation, pill button, mascot.
 
 ### Scaffold
 
 - `package.json` — React 18, Vite 5, Tailwind 3, autoprefixer, postcss
-- `vite.config.js` — `@vitejs/plugin-react`
-- `postcss.config.js`
-- `tailwind.config.js` — imports `tokens.js`, extends theme. `screens`, `fontFamily`, `fontWeight`, `lineHeight`, `letterSpacing`, `borderRadius` replace Tailwind defaults. Colors, spacing, font sizes, borders, transitions in `extend`.
-- `index.html` — preconnect hints only (no font `<link>`, fonts loaded via CSS `@import`)
-- `src/main.jsx`, `src/index.css` (imports design-system CSS then Tailwind layers)
+- `vite.config.js`, `postcss.config.js`
+- `tailwind.config.js` — imports `tokens.js`, extends theme
+- `index.html` — preconnect hints only
+- `src/main.jsx`, `src/index.css`
 
 ### `src/HomePage.jsx`
 
-Components built:
-
 **Nav**
 - Wordmark: Geist semibold, 18px, `--tracking-tight` (-1px), `--color-ink-muted`
-- Links: Geist, 16px, active = semibold + ink-primary, inactive = regular + ink-secondary
-- `focus-light` focus ring
+- Links: Geist 14px in a white rounded-rectangle container (`--radius-md`)
+- Active link: bold + `ink-primary`, inactive: regular + `ink-muted`
+- Hover: subtle `rgba(26,26,26,0.06)` background on each link
+- Mobile: hamburger menu — white dropdown, X icon when open
 
 **Hero**
-- Two-column flex layout (left: headline block, right: annotations)
+- Two-column flex layout (left: headline, right: annotations)
 - Line 1: Geist bold, `--size-hero-line1` (clamp 32–52px)
 - Line 2: Lora regular, `--size-hero-line2` (clamp 30–50px)
-- Brush stroke: SVG path, `stroke-dashoffset` animation, path length measured via `getTotalLength()` on mount
+- Brush stroke: SVG path, `stroke-dashoffset` animation, measured via `getTotalLength()`
 - Annotations: Lora, fade in on hover with 80ms delay
-- `useIsDesktop()` hook — `matchMedia('(min-width: 768px)')` with resize listener. Hover only fires on desktop. Resets `isHovered` if window shrinks to mobile while hovered.
+- `useIsDesktop()` hook — `matchMedia('(min-width: 768px)')` prevents hover at narrow widths
 - Mobile: single column, annotations always visible, brush always drawn
 
 **Accordion**
-- 4 panels: orange (Mobile-first), magenta (Usability), yellow (Chatbot), green (Design system)
-- Panel colors pulled from `colors['panel-*']` tokens — no hardcoded hex
+- 4 panels (left to right): Design system (orange), Usability study (magenta), Chatbot design (yellow), Mobile-first design (green)
+- Default expanded: last panel (Mobile-first design, green)
+- Panel colors from `colors['panel-*']` tokens — no hardcoded hex
 - `getPanelTokens(panel.color)` from `tokens.js` for all text/border/hover colors
-- `isLightPanel(color)` used in `PanelImage` placeholder
 - Desktop: horizontal flex, width transition 500ms accordion easing
-- Hover on collapsed panel expands to 72px
-- `overflow: hidden` on `.panel-clip` inside each panel (not on accordion itself) so mascot can peek above
-- Border radius applied per first/last panel on `.panel-clip`
-- Expanded panel: two columns — left (image/placeholder), right (content)
-- Content fade: opacity 0→1, 300ms, 250ms delay after panel opens
-- Rotated label: outside `.panel-clip`, fades out when expanded
-- Keyboard: Arrow Left/Right navigates and expands, Enter/Space expands focused tab
-- ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`, `aria-selected`, `aria-controls`, `aria-labelledby`
-- Mascot: last panel only, hidden when that panel is expanded, peeks above panel top edge, lifts 8px on hover with spring easing
-- Mobile: vertical stack, `max-height` transition, label horizontal not rotated, mascot hidden
+- `overflow: hidden` on `.panel-clip` inside each panel (not accordion itself) — mascot can peek above
+- Border radius on first/last panel only via `.panel-clip`
+- Image column: 25%, content column: 75%
+- Image: `object-fit: cover`, `object-position: top center`
+- Image padding: `--accordion-image-padding-top` top + `--accordion-content-padding-x` left only
+- Content padding: `--accordion-content-padding-y` top/bottom, `--accordion-content-padding-x` left, `--accordion-content-padding-x-right` right
+- Keyboard: Arrow Left/Right navigates, Enter/Space expands
+- ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`
+- Mascot: last panel only, spring easing, hidden when expanded, hidden on mobile
+
+**Expanded panel content (matches Figma):**
+- Client + year: Lora medium italic (500), 20px, `--tracking-tight`, `ink-primary` color, dot separator between client and year
+- Title: Geist semibold, 24px (`--size-panel-title-lg`), `--tracking-tight`
+- Description: Geist regular, 20px (`--size-panel-desc-lg`), `--tracking-snug` (-0.5px)
+- Role: same as description, bold label + regular value
+- Tools used: same as description, bold label + regular value
+- CTA pill: Lora regular italic, 20px, `--tracking-tight`, cream background (`--color-cream-base`), `--touch-target` min-height (44px), `--pill-padding-x`/`--pill-padding-y`
+- No navigation dots (removed)
+
+**Footer**
+- Always pinned to bottom via `margin-top: auto` on `.page-footer`
+- Border bleeds full width via negative margins
+- Left: mail icon + email, `ink-primary`
+- Right: "2026 · Designed by Lalita · Built with Claude Code", `ink-secondary`, dot separators
+- Reduced height via `space-3` padding
+
+**Page layout**
+- Desktop (≥1024px): `height: 100dvh`, `overflow: hidden`, flex column — everything above the fold
+- Below 1024px: normal scrolling
+- Accordion fills remaining height via `.accordion-wrapper { flex: 1; min-height: 0 }`
 
 ---
 
@@ -66,55 +85,49 @@ Components built:
 
 | Decision | Rationale |
 |---|---|
-| Google Fonts for both Geist + Lora | User confirmed — single `@import`, no npm package needed |
-| Nav font size 16px | Matches Figma (spec said 14px, Figma showed 16px) |
+| Google Fonts for both Geist + Lora | User confirmed — single `@import` |
+| Nav font size 14px | User decision after testing 16px |
 | Wordmark: 18px, semibold, -1px tracking | Confirmed from Figma |
-| Wordmark color: `ink-muted` | Figma shows #717171 — closest token is `--color-ink-muted` (#666666) |
-| "Engineer" stays ink-primary (not #444) | Figma color was a mistake per user |
-| `overflow: hidden` on `.panel-clip`, not `.accordion-panel` | Allows mascot to escape panel bounds |
-| `useIsDesktop()` JS hook for breakpoint | Prevents hover animations at narrow browser widths (not just touch devices) |
-| `getPanelTokens()` takes color hex, not isLight boolean | Color is single source of truth — `isLight` derived internally |
-| No `isLight` field in panel data array | Removed — redundant with `isLightPanel(color)` |
+| Wordmark color: `ink-muted` | Figma shows #717171 — closest token |
+| "Engineer" stays ink-primary | Figma color was a mistake per user |
+| `overflow: hidden` on `.panel-clip` | Allows mascot to escape panel bounds |
+| `useIsDesktop()` JS hook | Prevents hover animations at narrow browser widths |
+| `getPanelTokens()` takes color hex | Color is single source of truth, `isLight` derived internally |
+| No `isLight` field in panel data | Redundant with `isLightPanel(color)` |
+| Two-column flex for accordion image | Scales better than absolute positioning at all breakpoints |
+| Default expanded panel: last (index 3) | Per user request |
+| Lora weight 500 added | For client line in expanded panel — Figma spec |
+| No nav dots in expanded panel | Removed per user request |
+| Nav links in rounded-rectangle container | User changed from pill to rounded-rect |
+| Full-bleed footer border | Negative margins cancel page padding |
+| Above-fold layout desktop only | Mobile/tablet scrolls normally |
+
+---
+
+## New tokens added (since last commit)
+
+- `--color-surface-white: #FFFFFF` — UI surfaces (nav container, mobile menu)
+- `--size-wordmark: 18px` — wordmark only
+- `--tracking-tight: -1px` — wordmark, panel title, client line, pill
+- `--tracking-snug: -0.5px` — panel description, role, tools
+- `--size-panel-client: 20px` — client/year line
+- `--size-panel-title-lg: 24px` — expanded panel title
+- `--size-panel-desc-lg: 20px` — description, role, tools, pill text
+- `--weight-medium: 500` — Lora italic client line only
+- `--accordion-image-col-w: 25%` / `--accordion-content-col-w: 75%`
+- `--accordion-content-padding-x` / `--accordion-content-padding-x-right` / `--accordion-content-padding-y`
+- `--accordion-image-padding-top: var(--space-4)`
+- `--touch-target: 44px` — accessible min button height
+- `--pill-padding-x: var(--space-8)` / `--pill-padding-y: var(--space-4)`
 
 ---
 
 ## Remaining work
 
-### Accordion expanded panel content — needs Figma update
-Current content: tag, title, description, pill CTA, dots.
-Figma shows richer layout:
-- Client + year in **Lora italic** at top (e.g. *"Royal Australasian College of Surgeons (RACS)  2020"*)
-- Bold title
-- Description paragraph
-- **Role:** label (bold) + value (regular) on same line
-- **Tools used:** label (bold) + value (regular) on same line
-- "View full case study" pill has **cream background** (`var(--color-cream-base)`), not transparent
-
-Panel data needs new fields: `client`, `year`, `role`, `tools`.
-
-### Footer
-Not yet built. Figma shows:
-- Left: mail icon + `a4.lalita.chavan@gmail.com` in Geist Mono
-- Right: `2026 · Designed by Lalita · Built with` in Geist Mono
-- Thin top border
-- Note: "Built with" may need a logo/link (Claude Code? Figma?)
-
-### Other
-- Real mockup images (`/images/*.png`) not yet added — placeholder grid shown
+- Real mockup images for panels 1 (Airpals), 2 (Chatbot), 3 (Design system) — only RACS image added so far
+- Mobile accordion layout polish
 - No routing yet (nav links are plain `<a>` hrefs)
-
----
-
-## Token notes
-
-- `--tracking-tight: -1px` — wordmark only
-- `--tracking-panel-label: -0.07em` — rotated accordion labels only
-- `--size-wordmark: 18px` — separate from `--size-nav: 16px`
-- `accent-brush` and `panel-green` share `#D0D535` — different semantic tokens
-- `cream-base` and `ink-light` share `#F9F6F1` — different semantic tokens
-- Light panels (yellow, green) → `panel-light-*` tokens via `getPanelTokens()`
-- Dark panels (orange, magenta) → `panel-dark-*` tokens via `getPanelTokens()`
-- Do NOT reduce `panel-light-text-muted` opacity below 0.75 (WCAG AA requirement)
+- Case study pages not built
 
 ---
 

@@ -16,6 +16,7 @@
 
   --color-cream-base:    #F9F6F1; /* page background only */
   --color-cream-dark:    #DFCEB6; /* subtle surface variation */
+  --color-surface-white: #FFFFFF; /* UI surfaces only — not page backgrounds */
   --color-ink-primary:   #1A1A1A; /* headlines, primary text */
   --color-ink-secondary: #444444; /* body text */
   --color-ink-tertiary:  #535353; /* annotations, captions */
@@ -81,12 +82,16 @@
   --size-hero-line1:   clamp(32px, 4vw, 52px);
   --size-hero-line2:   clamp(30px, 3.8vw, 50px);
   --size-annotation:   clamp(13px, 1.2vw, 15px);
-  --size-nav:          16px;
+  --size-nav:          14px;
   --size-wordmark:     18px;
   --size-panel-label:  14px;
   --size-panel-tag:    11px;
   --size-panel-title:  clamp(16px, 1.8vw, 20px);
   --size-panel-desc:   13px;
+  --size-panel-client: 20px;
+  --size-panel-title-lg:  24px;
+  --size-panel-desc-lg:   20px;
+  --tracking-snug:        -0.5px;
   --size-panel-cta:    12px;
   --size-body:         15px;
   --size-caption:      12px;
@@ -98,6 +103,7 @@
      ----------------------------------------------------------- */
 
   --weight-regular:  400;
+  --weight-medium:   500; /* Lora italic client line only */
   --weight-semibold: 600; /* Geist accordion panel labels only */
   --weight-bold:     700;
 
@@ -148,18 +154,27 @@
   --hero-column-gap:    clamp(40px, 5vw, 80px);
 
   /* Accordion */
-  --accordion-height:           340px;
-  --accordion-collapsed-w:      60px;
-  --accordion-hover-w:          72px;
-  --accordion-radius:           16px;
-  --accordion-padding:          24px;
-  --panel-label-bottom:         16px;
+  --accordion-height:             340px;
+  --accordion-collapsed-w:        60px;
+  --accordion-hover-w:            72px;
+  --accordion-radius:             16px;
+  --accordion-padding:            24px;
+  --accordion-image-col-w:        25%;
+  --accordion-content-col-w:      75%;
+  --accordion-content-padding-x:  var(--space-10);
+  --accordion-content-padding-x-right: var(--space-16);
+  --accordion-content-padding-y:  var(--space-8);
+  --accordion-image-padding-top:  var(--space-4);
+  --panel-label-bottom:           16px;
   --accordion-collapsed-h-mobile: 56px;
 
   /* -----------------------------------------------------------
      BORDER RADIUS
      ----------------------------------------------------------- */
 
+  --touch-target:    44px;
+  --pill-padding-x:  var(--space-8);
+  --pill-padding-y:  var(--space-4);
   --radius-sm:   4px;
   --radius-md:   8px;
   --radius-lg:   12px;

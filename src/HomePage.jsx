@@ -11,7 +11,7 @@ const DESKTOP_BREAKPOINT = '(min-width: 768px)'
 
 const navLinks = [
   { label: 'Home',     href: '/',        active: true  },
-  { label: 'Work',     href: '/work',    active: false },
+  { label: 'Projects', href: '/work',    active: false },
   { label: 'About',    href: '/about',   active: false },
   { label: 'Contact',  href: '/contact', active: false },
   { label: 'Resume',   href: '/resume',  active: false },
@@ -19,42 +19,17 @@ const navLinks = [
 ]
 
 function Nav() {
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
-    <nav
-      aria-label="Main navigation"
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingBottom: 'var(--space-10)',
-      }}
-    >
+    <nav aria-label="Main navigation" className="nav-bar">
       {/* Wordmark */}
-      <a
-        href="/"
-        style={{
-          fontFamily: 'var(--font-sans)',
-          fontSize: 'var(--size-wordmark)',
-          fontWeight: 'var(--weight-semibold)',
-          color: 'var(--color-ink-muted)',
-          letterSpacing: 'var(--tracking-tight)',
-          textDecoration: 'none',
-        }}
-      >
+      <a href="/" className="nav-wordmark focus-light">
         Lalita Chavan
       </a>
 
-      {/* Links */}
-      <ul
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-8)',
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-        }}
-      >
+      {/* Desktop links */}
+      <ul className="nav-links">
         {navLinks.map(({ label, href, active }) => (
           <li key={label}>
             <a
@@ -62,12 +37,10 @@ function Nav() {
               className="nav-link focus-light"
               aria-current={active ? 'page' : undefined}
               style={{
-                fontWeight: active
-                  ? 'var(--weight-semibold)'
-                  : 'var(--weight-regular)',
-                color: active
-                  ? 'var(--color-ink-primary)'
-                  : 'var(--color-ink-secondary)',
+                padding: 'var(--space-2) var(--space-4)',
+                borderRadius: 'var(--radius-md)',
+                fontWeight: active ? 'var(--weight-bold)' : 'var(--weight-regular)',
+                color: active ? 'var(--color-ink-primary)' : 'var(--color-ink-muted)',
               }}
             >
               {label}
@@ -75,6 +48,51 @@ function Nav() {
           </li>
         ))}
       </ul>
+
+      {/* Hamburger button — mobile only */}
+      <button
+        className="nav-hamburger focus-light"
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((o) => !o)}
+      >
+        {menuOpen ? (
+          /* X icon */
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+            <line x1="4" y1="4" x2="16" y2="16" />
+            <line x1="16" y1="4" x2="4" y2="16" />
+          </svg>
+        ) : (
+          /* Hamburger icon */
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+            <line x1="3" y1="5" x2="17" y2="5" />
+            <line x1="3" y1="10" x2="17" y2="10" />
+            <line x1="3" y1="15" x2="17" y2="15" />
+          </svg>
+        )}
+      </button>
+
+      {/* Mobile menu — shown when open */}
+      {menuOpen && (
+        <ul className="nav-mobile-menu">
+          {navLinks.map(({ label, href, active }) => (
+            <li key={label}>
+              <a
+                href={href}
+                className="nav-link focus-light"
+                aria-current={active ? 'page' : undefined}
+                style={{
+                  fontWeight: active ? 'var(--weight-bold)' : 'var(--weight-regular)',
+                  color: active ? 'var(--color-ink-primary)' : 'var(--color-ink-muted)',
+                }}
+                onClick={() => setMenuOpen(false)}
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
     </nav>
   )
 }
@@ -86,23 +104,29 @@ function Nav() {
 const panels = [
   {
     id: 0,
-    label: 'Mobile-first design',
+    label: 'Design system',
     color: colors['panel-orange'],
-    tag: 'RACS · 2023',
-    title: 'Simplifying CPD tracking for surgeons',
+    client: 'Royal Australasian College of Surgeons (RACS)',
+    year: '2023',
+    title: "Building the organization's first design system",
     description:
-      "Redesigned compliance tracking for 7,000+ surgeons. Reduced logging time with a mobile-first dashboard and the organization's first digital style guide.",
-    caseStudyUrl: '/work/racs',
-    imageSrc: '/images/racs-mockup.png',
+      'Typography, color tokens, components, and developer documentation built from scratch for a team of developers and stakeholders.',
+    role: 'Design Systems Designer',
+    tools: 'Figma, Storybook',
+    caseStudyUrl: '/work/design-system',
+    imageSrc: '/images/design-system-mockup.png',
   },
   {
     id: 1,
     label: 'Usability study',
     color: colors['panel-magenta'],
-    tag: 'Airpals · 2022',
+    client: 'Airpals',
+    year: '2022',
     title: 'Usability testing for a logistics startup',
     description:
       'End-to-end usability research surfacing key friction points and delivering actionable design recommendations.',
+    role: 'UX Researcher',
+    tools: 'Maze, Figma',
     caseStudyUrl: '/work/airpals',
     imageSrc: '/images/airpals-mockup.png',
   },
@@ -110,23 +134,29 @@ const panels = [
     id: 2,
     label: 'Chatbot design',
     color: colors['panel-yellow'],
-    tag: 'Travel AI · 2024',
+    client: 'Travel AI',
+    year: '2024',
     title: 'Conversational UI for an AI travel planner',
     description:
       'Designed intent mapping, response formatting, and error states for an AI-powered travel assistant.',
+    role: 'Product Designer',
+    tools: 'Figma, ChatGPT',
     caseStudyUrl: '/work/travel-ai',
     imageSrc: '/images/chatbot-mockup.png',
   },
   {
     id: 3,
-    label: 'Design system',
+    label: 'Mobile-first design',
     color: colors['panel-green'],
-    tag: 'RACS · 2023',
-    title: "Building the organization's first design system",
+    client: 'Royal Australasian College of Surgeons (RACS)',
+    year: '2020',
+    title: 'Simplifying professional development activity logging and tracking for surgeons at RACS',
     description:
-      'Typography, color tokens, components, and developer documentation built from scratch for a team of developers and stakeholders.',
-    caseStudyUrl: '/work/design-system',
-    imageSrc: '/images/design-system-mockup.png',
+      'Reducing cognitive load for surgeons by simplifying navigation, surfacing unfinished tasks on the home screen, and creating a one-click path to key actions.',
+    role: '0 > 1 UI/UX Designer, UX Researcher, Business Analyst',
+    tools: 'Adobe XD, Adobe Illustrator',
+    caseStudyUrl: '/work/racs',
+    imageSrc: '/images/racs-mockup.png',
   },
 ]
 
@@ -201,7 +231,7 @@ function PanelImage({ imageSrc, color }) {
       <img
         src={imageSrc}
         alt=""
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
       />
     )
   }
@@ -228,7 +258,7 @@ function PanelImage({ imageSrc, color }) {
 // =============================================================
 
 function Accordion() {
-  const [activePanel, setActivePanel] = useState(0)
+  const [activePanel, setActivePanel] = useState(panels.length - 1)
   const tabRefs = useRef([])
 
   function handleKeyDown(e, index) {
@@ -298,62 +328,67 @@ function Accordion() {
                   aria-labelledby={`panel-tab-${panel.id}`}
                   className="accordion-panel-content panel-content-col"
                 >
-                  {/* Project tag */}
-                  <span
-                    className="panel-tag"
-                    style={{ color: tok.muted }}
-                  >
-                    {panel.tag}
-                  </span>
+                  {/* Client + year — Lora medium italic */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-3)',
+                    fontFamily: 'var(--font-serif)',
+                    fontStyle: 'italic',
+                    fontSize: 'var(--size-panel-client)',
+                    fontWeight: 'var(--weight-medium)',
+                    letterSpacing: 'var(--tracking-tight)',
+                    color: tok.text,
+                  }}>
+                    <span>{panel.client}</span>
+                    <Dot color={tok.text} />
+                    <span>{panel.year}</span>
+                  </div>
 
                   {/* Project title */}
-                  <h3
-                    className="panel-title"
-                    style={{ color: tok.text, margin: 0 }}
-                  >
+                  <h3 className="panel-title" style={{ color: tok.text, margin: 0, fontSize: 'var(--size-panel-title-lg)', fontWeight: 'var(--weight-semibold)', letterSpacing: 'var(--tracking-tight)' }}>
                     {panel.title}
                   </h3>
 
-                  {/* Project description */}
-                  <p
-                    className="panel-desc"
-                    style={{ color: tok.body, margin: 0 }}
-                  >
+                  {/* Description */}
+                  <p style={{ fontFamily: 'var(--font-sans)', fontSize: 'var(--size-panel-desc-lg)', fontWeight: 'var(--weight-regular)', letterSpacing: 'var(--tracking-snug)', color: tok.body, margin: 0, lineHeight: 'var(--leading-normal)' }}>
                     {panel.description}
                   </p>
 
-                  {/* View case study — pill link */}
+                  {/* Role */}
+                  <p style={{ fontFamily: 'var(--font-sans)', fontSize: 'var(--size-panel-desc-lg)', fontWeight: 'var(--weight-regular)', letterSpacing: 'var(--tracking-snug)', color: tok.body, margin: 0, lineHeight: 'var(--leading-normal)' }}>
+                    <span style={{ fontWeight: 'var(--weight-bold)', color: tok.text }}>Role: </span>
+                    {panel.role}
+                  </p>
+
+                  {/* Tools used */}
+                  <p style={{ fontFamily: 'var(--font-sans)', fontSize: 'var(--size-panel-desc-lg)', fontWeight: 'var(--weight-regular)', letterSpacing: 'var(--tracking-snug)', color: tok.body, margin: 0, lineHeight: 'var(--leading-normal)' }}>
+                    <span style={{ fontWeight: 'var(--weight-bold)', color: tok.text }}>Tools used: </span>
+                    {panel.tools}
+                  </p>
+
+                  {/* View case study — cream pill */}
                   <a
                     href={panel.caseStudyUrl}
                     className="pill focus-dark"
                     style={{
-                      color: tok.text,
-                      borderColor: tok.border,
-                      '--pill-hover-bg': tok.hoverBg,
+                      fontFamily: 'var(--font-serif)',
+                      fontStyle: 'italic',
+                      fontSize: 'var(--size-panel-desc-lg)',
+                      fontWeight: 'var(--weight-regular)',
+                      letterSpacing: 'var(--tracking-tight)',
+                      color: 'var(--color-ink-primary)',
+                      background: 'var(--color-cream-base)',
+                      border: 'none',
+                      '--pill-hover-bg': 'var(--color-cream-dark)',
                       marginTop: 'var(--space-1)',
                       alignSelf: 'flex-start',
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    View case study
+                    View full case study
                   </a>
 
-                  {/* Navigation dots */}
-                  <div className="nav-dots" role="presentation">
-                    {panels.map((p) => (
-                      <button
-                        key={p.id}
-                        className={`nav-dot ${activePanel === p.id ? 'is-active' : ''}`}
-                        style={{
-                          background: activePanel === p.id
-                            ? tok.dotActive
-                            : tok.dotInactive,
-                        }}
-                        aria-label={`View ${p.label}`}
-                        onClick={(e) => { e.stopPropagation(); setActivePanel(p.id) }}
-                      />
-                    ))}
-                  </div>
                 </div>
 
               </div>
@@ -458,23 +493,115 @@ function Hero() {
 }
 
 // =============================================================
+// FOOTER
+// =============================================================
+
+function MailIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="var(--color-ink-primary)"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ flexShrink: 0 }}
+    >
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="M2 7 L12 13 L22 7" />
+    </svg>
+  )
+}
+
+function Footer() {
+  return (
+    <footer
+      className="page-footer"
+      style={{
+        marginLeft: 'calc(var(--page-padding-x) * -1)',
+        marginRight: 'calc(var(--page-padding-x) * -1)',
+        paddingTop: 'var(--space-3)',
+        paddingBottom: 'var(--space-3)',
+        paddingLeft: 'var(--page-padding-x)',
+        paddingRight: 'var(--page-padding-x)',
+        borderTop: '1px solid var(--border-color-default)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      {/* Left — email */}
+      <a
+        href="mailto:a4.lalita.chavan@gmail.com"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'var(--space-3)',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 'var(--size-body)',
+          fontWeight: 'var(--weight-regular)',
+          color: 'var(--color-ink-primary)',
+          textDecoration: 'none',
+        }}
+        className="focus-light"
+      >
+        <MailIcon />
+        a4.lalita.chavan@gmail.com
+      </a>
+
+      {/* Right — credits */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'var(--space-3)',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 'var(--size-caption)',
+          color: 'var(--color-ink-secondary)',
+        }}
+      >
+        <span>2026</span>
+        <Dot />
+        <span>Designed by Lalita</span>
+        <Dot />
+        <span>Built with Claude Code</span>
+      </div>
+    </footer>
+  )
+}
+
+function Dot({ color = 'var(--color-ink-muted)' }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width: '4px',
+        height: '4px',
+        borderRadius: 'var(--radius-full)',
+        background: color,
+        display: 'inline-block',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
+
+// =============================================================
 // PAGE
 // =============================================================
 
 export default function HomePage() {
   return (
-    <main
-      style={{
-        background: 'var(--color-cream-base)',
-        minHeight: '100dvh',
-        paddingTop: 'var(--page-padding-top)',
-        paddingLeft: 'var(--page-padding-x)',
-        paddingRight: 'var(--page-padding-x)',
-      }}
-    >
+    <main className="page-layout">
       <Nav />
       <Hero />
-      <Accordion />
+      <div className="accordion-wrapper">
+        <Accordion />
+      </div>
+      <Footer />
     </main>
   )
 }

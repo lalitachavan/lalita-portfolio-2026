@@ -24,6 +24,7 @@ export const colors = {
   // Base palette
   'cream-base':    '#F9F6F1', // page background only
   'cream-dark':    '#DFCEB6', // subtle surface variation
+  'surface-white': '#FFFFFF', // UI surfaces only — not page backgrounds
   'ink-primary':   '#1A1A1A', // headlines, primary text
   'ink-secondary': '#444444', // body text
   'ink-tertiary':  '#535353', // annotations, captions
@@ -105,12 +106,15 @@ export const typography = {
     'hero-line1':   ['clamp(32px, 4vw, 52px)',   { lineHeight: '1.15' }],
     'hero-line2':   ['clamp(30px, 3.8vw, 50px)', { lineHeight: '1.15' }],
     'annotation':   ['clamp(13px, 1.2vw, 15px)', { lineHeight: '1.6'  }],
-    'nav':          ['16px', { lineHeight: '1.6' }],
+    'nav':          ['14px', { lineHeight: '1.6' }],
     'wordmark':     ['18px', { lineHeight: '1'   }],
     'panel-label':  ['14px', { lineHeight: '1'   }],
     'panel-tag':    ['11px', { lineHeight: '1'   }],
     'panel-title':  ['clamp(16px, 1.8vw, 20px)', { lineHeight: '1.3'  }],
     'panel-desc':   ['13px', { lineHeight: '1.6' }],
+    'panel-client':   ['20px', { lineHeight: '1.4' }],
+    'panel-title-lg': ['24px', { lineHeight: '1.3' }],
+    'panel-desc-lg':  ['20px', { lineHeight: '1.6' }],
     'panel-cta':    ['12px', { lineHeight: '1'   }],
     'body':         ['15px', { lineHeight: '1.6' }],
     'caption':      ['12px', { lineHeight: '1.6' }],
@@ -119,6 +123,7 @@ export const typography = {
 
   fontWeight: {
     regular:  '400',
+    medium:   '500', // Lora italic client line only
     semibold: '600', // Geist accordion panel labels only
     bold:     '700',
   },
@@ -132,7 +137,8 @@ export const typography = {
 
   letterSpacing: {
     normal:        '0',
-    tight:         '-1px',    // wordmark
+    snug:          '-0.5px',  // panel description
+    tight:         '-1px',    // wordmark, panel title
     wide:          '0.04em',
     wider:         '0.07em',  // uppercase tags
     'panel-label': '-0.07em', // Geist semibold rotated labels only
@@ -174,6 +180,8 @@ export const spacing = {
   'accordion-hover-w':           '72px',
   'accordion-radius':            '16px',
   'accordion-padding':           '24px',
+  'accordion-image-col-w':      '25%',
+  'accordion-content-col-w':    '75%',
   'panel-label-bottom':          '16px',
   'accordion-collapsed-h-mobile': '56px',
 }
