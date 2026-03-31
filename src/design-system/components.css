@@ -1,0 +1,439 @@
+/* =============================================================
+   COMPONENT STYLES — Lalita Chavan Portfolio
+
+   Animation states are driven by JS class toggling.
+   CSS provides transitions and layout only.
+
+   ALL transitions are inside:
+   @media (prefers-reduced-motion: no-preference)
+   Users who opt out receive instant state changes.
+   ============================================================= */
+
+/* =============================================================
+   FOCUS RING
+   Class-based — apply .focus-light or .focus-dark to the
+   interactive element. Never style :focus directly.
+   ============================================================= */
+
+.focus-light:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.focus-dark:focus-visible {
+  outline: 3px solid #FFFFFF;
+  outline-offset: -4px;
+}
+
+/* =============================================================
+   HERO LAYOUT
+   ============================================================= */
+
+.hero-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--hero-column-gap);
+}
+
+.hero-text-block {
+  flex: 0 0 auto;
+  cursor: default;
+}
+
+.hero-line-2-wrapper {
+  position: relative;
+  display: block;
+  width: fit-content;
+}
+
+.brush-svg {
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.hero-annotations {
+  flex: 1;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--hero-annotation-gap);
+}
+
+@media (max-width: 767px) {
+  .hero-section {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .hero-annotations {
+    max-width: 100%;
+  }
+}
+
+/* =============================================================
+   BRUSH STROKE
+   State classes toggled by JS. --brush-length set on SVG inline.
+   ============================================================= */
+
+.brush-stroke {
+  stroke-dasharray: var(--brush-length, 300);
+  stroke-dashoffset: var(--brush-length, 300);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .brush-stroke.visible {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 300ms ease-out;
+  }
+
+  .brush-stroke.hidden {
+    stroke-dashoffset: var(--brush-length, 300);
+    transition: stroke-dashoffset 200ms ease-out;
+  }
+}
+
+@media (max-width: 767px) {
+  .brush-stroke {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+}
+
+/* =============================================================
+   ANNOTATION REVEAL
+   State classes toggled by JS. Mobile: always visible.
+   ============================================================= */
+
+.annotation {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .annotation.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity   250ms ease-out 80ms,
+      transform 250ms ease-out 80ms;
+  }
+
+  .annotation.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition:
+      opacity   150ms ease-out,
+      transform 150ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .annotation {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .annotation {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* =============================================================
+   ACCORDION — desktop: horizontal flex
+   overflow:hidden lives on .panel-clip (not here) so the
+   mascot can peek above its panel without being clipped.
+   ============================================================= */
+
+.accordion {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  height: var(--accordion-height);
+  margin-top: var(--hero-gap);
+  /* No overflow:hidden here — border-radius on .panel-clip */
+}
+
+/* ── Panel shell ── */
+.accordion-panel {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--accordion-collapsed-w);
+  cursor: pointer;
+  /* No overflow:hidden — content clipped by .panel-clip inside */
+}
+
+.accordion-panel.is-expanded {
+  flex: 1;
+  flex-shrink: 1;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .accordion-panel {
+    transition: width var(--duration-accordion) var(--easing-accordion);
+  }
+
+  .accordion-panel:hover:not(.is-expanded) {
+    width: var(--accordion-hover-w);
+    transition: width 200ms ease-out;
+  }
+}
+
+/* ── Content clip
+   Clips the image + right column. Border-radius applied per
+   first/last panel via inline style in the component.
+   ─────────────────────────────────────────────────────────── */
+.panel-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ── Two-column inner layout ── */
+.panel-inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.panel-image-col {
+  width: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* ── Right column — fades in when panel expands ── */
+.panel-content-col {
+  width: 50%;
+  padding: var(--accordion-padding);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ── Content fade — opacity only, no position styles ── */
+.accordion-panel-content {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.accordion-panel.is-expanded .accordion-panel-content {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .accordion-panel.is-expanded .accordion-panel-content {
+    opacity: 1;
+    transition: opacity 300ms ease-out 250ms;
+  }
+
+  .accordion-panel:not(.is-expanded) .accordion-panel-content {
+    opacity: 0;
+    transition: opacity 150ms ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-panel.is-expanded .accordion-panel-content {
+    opacity: 1;
+  }
+}
+
+/* =============================================================
+   PANEL LABEL — rotated collapsed state
+   Outside .panel-clip so it's never clipped.
+   ============================================================= */
+
+.panel-label-rotated {
+  position: absolute;
+  bottom: var(--panel-label-bottom);
+  left: 50%;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center center;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel-label-rotated {
+    transition: opacity 200ms ease-out;
+  }
+}
+
+.accordion-panel.is-expanded .panel-label-rotated {
+  opacity: 0;
+}
+
+/* =============================================================
+   NAVIGATION DOTS
+   ============================================================= */
+
+.nav-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-dot {
+    transition:
+      background 200ms var(--easing-default),
+      transform  200ms var(--easing-default);
+  }
+
+  .nav-dot.is-active {
+    transform: scale(1.3);
+  }
+}
+
+/* =============================================================
+   PILL BUTTON
+   --pill-hover-bg is set per panel via inline style.
+   ============================================================= */
+
+.pill {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pill {
+    transition: background var(--duration-default) var(--easing-default);
+  }
+}
+
+.pill:hover,
+.pill:focus-visible {
+  background: var(--pill-hover-bg, transparent);
+}
+
+/* =============================================================
+   MASCOT — peeking cat on rightmost collapsed panel.
+   Positioned outside .panel-clip so it can exceed the panel's
+   top boundary. The accordion has no overflow:hidden so the
+   mascot is fully visible above the accordion row.
+   ============================================================= */
+
+.mascot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* Center the mascot on the top edge — half peeks above */
+  transform: translateX(-50%) translateY(-50%);
+  z-index: var(--mascot-z-index);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mascot {
+    transition: transform 300ms var(--easing-spring);
+  }
+
+  .accordion-panel:hover .mascot {
+    transform: translateX(-50%) translateY(calc(-50% - 8px));
+  }
+}
+
+@media (max-width: 767px) {
+  .mascot {
+    display: none;
+  }
+}
+
+/* =============================================================
+   MOBILE ACCORDION (≤767px) — vertical stack
+   Panels expand by max-height. Image stacks above content.
+   ============================================================= */
+
+@media (max-width: 767px) {
+  .accordion {
+    flex-direction: column;
+    height: auto;
+    margin-top: var(--hero-gap);
+  }
+
+  .accordion-panel {
+    width: 100%;
+    height: var(--accordion-collapsed-h-mobile);
+    max-height: var(--accordion-collapsed-h-mobile);
+    overflow: hidden; /* re-apply on mobile — mascot hidden anyway */
+  }
+
+  .accordion-panel.is-expanded {
+    flex: none;
+    width: 100%;
+    height: auto;
+    max-height: 600px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .accordion-panel {
+      transition: max-height var(--duration-accordion) var(--easing-accordion);
+    }
+  }
+
+  /* Mobile panel inner: stack image above content */
+  .panel-inner {
+    flex-direction: column;
+  }
+
+  .panel-image-col {
+    width: 100%;
+    height: 200px;
+  }
+
+  .panel-content-col {
+    width: 100%;
+    padding: 20px;
+    justify-content: flex-start;
+  }
+
+  /* Mobile: clip to full border-radius for all panels */
+  .panel-clip {
+    border-radius: 0 !important; /* stack = no radius on inner panels */
+  }
+
+  .accordion-panel:first-child .panel-clip {
+    border-radius: var(--accordion-radius) var(--accordion-radius) 0 0 !important;
+  }
+
+  .accordion-panel:last-child .panel-clip {
+    border-radius: 0 0 var(--accordion-radius) var(--accordion-radius) !important;
+  }
+
+  /* Mobile collapsed label: horizontal, left-aligned, not rotated */
+  .panel-label-rotated {
+    transform: none;
+    left: var(--accordion-padding);
+    bottom: auto;
+    top: 50%;
+    translate: 0 -50%;
+  }
+
+  .accordion-panel.is-expanded .panel-label-rotated {
+    display: none;
+  }
+}

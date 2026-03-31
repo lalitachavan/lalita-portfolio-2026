@@ -1,0 +1,228 @@
+/* =============================================================
+   DESIGN TOKENS — Lalita Chavan Portfolio
+   Editorial, warm, typographically considered.
+   All values derived from the design system spec.
+
+   FONTS: Geist and Lora both loaded via Google Fonts.
+   Single @import in typography.css covers both.
+   No npm package or CDN needed for Geist.
+   ============================================================= */
+
+:root {
+
+  /* -----------------------------------------------------------
+     COLORS — Base palette
+     ----------------------------------------------------------- */
+
+  --color-cream-base:    #F9F6F1; /* page background only */
+  --color-cream-dark:    #DFCEB6; /* subtle surface variation */
+  --color-ink-primary:   #1A1A1A; /* headlines, primary text */
+  --color-ink-secondary: #444444; /* body text */
+  --color-ink-tertiary:  #535353; /* annotations, captions */
+  --color-ink-muted:     #666666; /* placeholders, disabled */
+  --color-ink-light:     #F9F6F1; /* text on dark backgrounds */
+
+  /* Accent — RESERVED for brush stroke SVG only */
+  --color-accent-brush:     #D0D535;
+  --color-accent-brush-rgb: 208, 213, 53; /* for rgba() usage */
+
+  /* -----------------------------------------------------------
+     COLORS — Accordion panel identifiers
+     RESERVED: do not use for any other UI element.
+     ----------------------------------------------------------- */
+
+  --color-panel-orange:  #C74B25; /* Mobile-first design */
+  --color-panel-magenta: #BD2569; /* Usability study */
+  --color-panel-yellow:  #F3BE37; /* Chatbot design */
+  --color-panel-green:   #D0D535; /* Design system */
+
+  /* -----------------------------------------------------------
+     COLORS — Panel text (dark panels: orange, magenta)
+     WCAG AA verified: orange+white 4.52:1, magenta+white 5.18:1
+     ----------------------------------------------------------- */
+
+  --color-panel-dark-text:      #FFFFFF;
+  --color-panel-dark-text-muted: rgba(255, 255, 255, 0.65);
+  --color-panel-dark-text-body:  rgba(255, 255, 255, 0.85);
+  --color-panel-dark-border:     rgba(255, 255, 255, 0.5);
+  --color-panel-dark-hover-bg:   rgba(255, 255, 255, 0.15);
+
+  /* -----------------------------------------------------------
+     COLORS — Panel text (light panels: yellow, green)
+     WCAG AAA verified: yellow+ink 7.94:1, green+ink 7.21:1
+     Do NOT reduce muted opacity below 0.75.
+     ----------------------------------------------------------- */
+
+  --color-panel-light-text:      #1A1A1A;
+  --color-panel-light-text-muted: rgba(26, 26, 26, 0.75);
+  --color-panel-light-text-body:  rgba(26, 26, 26, 0.88);
+  --color-panel-light-border:     rgba(26, 26, 26, 0.35);
+  --color-panel-light-hover-bg:   rgba(26, 26, 26, 0.08);
+
+  /* -----------------------------------------------------------
+     COLORS — Semantic
+     ----------------------------------------------------------- */
+
+  --color-focus-ring: #1A1A1A;
+  --color-error:      #C74B25; /* mirrors panel-orange */
+  --color-success:    #D0D535; /* mirrors panel-green */
+
+  /* -----------------------------------------------------------
+     TYPOGRAPHY — Font families
+     ----------------------------------------------------------- */
+
+  --font-sans:  "Geist", "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Lora", "Times New Roman", serif;
+
+  /* -----------------------------------------------------------
+     TYPOGRAPHY — Font sizes
+     ----------------------------------------------------------- */
+
+  --size-hero-line1:   clamp(32px, 4vw, 52px);
+  --size-hero-line2:   clamp(30px, 3.8vw, 50px);
+  --size-annotation:   clamp(13px, 1.2vw, 15px);
+  --size-nav:          16px;
+  --size-wordmark:     18px;
+  --size-panel-label:  14px;
+  --size-panel-tag:    11px;
+  --size-panel-title:  clamp(16px, 1.8vw, 20px);
+  --size-panel-desc:   13px;
+  --size-panel-cta:    12px;
+  --size-body:         15px;
+  --size-caption:      12px;
+  --size-label:        11px;
+
+  /* -----------------------------------------------------------
+     TYPOGRAPHY — Font weights
+     400, 600, 700 only. 600 reserved for panel labels.
+     ----------------------------------------------------------- */
+
+  --weight-regular:  400;
+  --weight-semibold: 600; /* Geist accordion panel labels only */
+  --weight-bold:     700;
+
+  /* -----------------------------------------------------------
+     TYPOGRAPHY — Line heights
+     ----------------------------------------------------------- */
+
+  --leading-tight:   1.15; /* hero headlines */
+  --leading-snug:    1.3;  /* panel titles */
+  --leading-normal:  1.6;  /* body, annotations */
+  --leading-relaxed: 1.7;  /* long-form prose */
+
+  /* -----------------------------------------------------------
+     TYPOGRAPHY — Letter spacing
+     ----------------------------------------------------------- */
+
+  --tracking-normal:       0;
+  --tracking-wide:         0.04em;
+  --tracking-wider:        0.07em;  /* uppercase tags */
+  --tracking-tight:        -1px;     /* wordmark */
+  --tracking-panel-label: -0.07em;  /* Geist semibold rotated labels only */
+
+  /* -----------------------------------------------------------
+     SPACING — Base unit: 4px
+     ----------------------------------------------------------- */
+
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Page layout */
+  --page-padding-x:   clamp(24px, 5vw, 80px);
+  --page-padding-top: clamp(24px, 4vw, 48px);
+  --hero-gap:         clamp(48px, 6vw, 96px);
+
+  /* Hero internals */
+  --hero-headline-gap:  8px;
+  --hero-annotation-gap: 12px;
+  --hero-column-gap:    clamp(40px, 5vw, 80px);
+
+  /* Accordion */
+  --accordion-height:           340px;
+  --accordion-collapsed-w:      60px;
+  --accordion-hover-w:          72px;
+  --accordion-radius:           16px;
+  --accordion-padding:          24px;
+  --panel-label-bottom:         16px;
+  --accordion-collapsed-h-mobile: 56px;
+
+  /* -----------------------------------------------------------
+     BORDER RADIUS
+     ----------------------------------------------------------- */
+
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-full: 9999px;
+
+  /* -----------------------------------------------------------
+     BORDERS
+     ----------------------------------------------------------- */
+
+  --border-thin:    0.5px;
+  --border-default: 1px;
+  --border-medium:  1.5px;
+  --border-thick:   2px;
+
+  --border-color-default: rgba(0, 0, 0, 0.12);
+  --border-color-subtle:  rgba(0, 0, 0, 0.06);
+  --border-color-strong:  rgba(0, 0, 0, 0.25);
+
+  /* -----------------------------------------------------------
+     ANIMATION — Durations
+     ----------------------------------------------------------- */
+
+  --duration-fast:      150ms;
+  --duration-default:   250ms;
+  --duration-slow:      400ms;
+  --duration-accordion: 500ms;
+
+  /* -----------------------------------------------------------
+     ANIMATION — Easings
+     ----------------------------------------------------------- */
+
+  --easing-default:   ease-out;
+  --easing-accordion: cubic-bezier(0.77, 0, 0.175, 1);
+  --easing-spring:    cubic-bezier(0.34, 1.56, 0.64, 1); /* mascot only */
+
+  /* -----------------------------------------------------------
+     LAYOUT
+     ----------------------------------------------------------- */
+
+  --bp-mobile:          640px;
+  --bp-tablet:          768px;
+  --bp-desktop:         1024px;
+  --bp-wide:            1280px;
+  --max-content-width:  1280px;
+  --hero-right-max-w:   380px;
+
+  /* -----------------------------------------------------------
+     COMPONENT — Navigation dots
+     ----------------------------------------------------------- */
+
+  --dot-size:            8px;
+  --dot-inactive-dark:   rgba(255, 255, 255, 0.3);
+  --dot-active-dark:     #FFFFFF;
+  --dot-inactive-light:  rgba(26, 26, 26, 0.25);
+  --dot-active-light:    #1A1A1A;
+
+  /* -----------------------------------------------------------
+     COMPONENT — Mascot
+     ----------------------------------------------------------- */
+
+  --mascot-stroke:       #1A1A1A;
+  --mascot-stroke-width: 1.5px;
+  --mascot-z-index:      10;
+
+}

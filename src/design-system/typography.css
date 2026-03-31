@@ -1,0 +1,217 @@
+/* =============================================================
+   TYPOGRAPHY — Lalita Chavan Portfolio
+
+   FONTS: Geist and Lora both loaded via Google Fonts.
+   Single @import covers both. No npm package needed.
+   Geist weights: 400, 600, 700
+   Lora weights:  400 regular, 400 italic, 700 regular
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* =============================================================
+   BASE RESET
+   ============================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* =============================================================
+   BASE TYPE
+   ============================================================= */
+
+html {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);        /* 15px */
+  font-weight: var(--weight-regular); /* 400 */
+  line-height: var(--leading-normal); /* 1.6 */
+  color: var(--color-ink-secondary);
+  background-color: var(--color-cream-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/* =============================================================
+   HEADINGS
+   All headings use Geist (font-sans) by default.
+   Hero Line 2 overrides to Lora at the component level.
+   ============================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-ink-primary);
+  margin: 0;
+}
+
+/* =============================================================
+   BODY COPY
+   ============================================================= */
+
+p {
+  margin: 0;
+  color: var(--color-ink-secondary);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+}
+
+/* =============================================================
+   HERO HEADLINE
+   Line 1: Geist bold (default heading styles apply)
+   Line 2: Lora regular — editorial contrast
+   ============================================================= */
+
+.hero-line-1 {
+  font-family: var(--font-sans);
+  font-size: var(--size-hero-line1);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-normal);
+  color: var(--color-ink-primary);
+}
+
+.hero-line-2 {
+  font-family: var(--font-serif);
+  font-size: var(--size-hero-line2);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-normal);
+  color: var(--color-ink-primary);
+}
+
+/* =============================================================
+   ANNOTATION
+   Hover-revealed text. Lora regular — editorial register.
+   Hidden/visible states are driven by JS; transitions live
+   in components.css inside prefers-reduced-motion.
+   ============================================================= */
+
+.annotation {
+  font-family: var(--font-serif);
+  font-size: var(--size-annotation);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-tertiary);
+}
+
+/* =============================================================
+   NAVIGATION
+   ============================================================= */
+
+.nav-link {
+  font-family: var(--font-sans);
+  font-size: var(--size-nav);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-ink-secondary);
+  text-decoration: none;
+}
+
+.nav-link[aria-current="page"],
+.nav-link.is-active {
+  font-weight: var(--weight-semibold);
+  color: var(--color-ink-primary);
+}
+
+/* =============================================================
+   TAGS / LABELS
+   Uppercase, tracked out, small. Geist only.
+   ============================================================= */
+
+.tag {
+  font-family: var(--font-sans);
+  font-size: var(--size-panel-tag);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* =============================================================
+   CAPTION
+   ============================================================= */
+
+.caption {
+  font-family: var(--font-sans);
+  font-size: var(--size-caption);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-tertiary);
+}
+
+/* =============================================================
+   PANEL TYPOGRAPHY (accordion internals)
+   All Geist. Inherits panel text color from component.
+   ============================================================= */
+
+.panel-title {
+  font-family: var(--font-sans);
+  font-size: var(--size-panel-title);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-normal);
+}
+
+.panel-desc {
+  font-family: var(--font-sans);
+  font-size: var(--size-panel-desc);
+  line-height: var(--leading-normal);
+}
+
+.panel-tag {
+  font-family: var(--font-sans);
+  font-size: var(--size-panel-tag);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Rotated collapsed label — Geist semibold, tracked tight */
+.panel-label {
+  font-family: var(--font-sans);
+  font-size: var(--size-panel-label);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-panel-label);
+  line-height: 1;
+}
+
+/* =============================================================
+   PILL / CTA BUTTON TEXT
+   font-serif (Lora) bold — editorial CTA register.
+   Color and border come from the component.
+   ============================================================= */
+
+.pill {
+  font-family: var(--font-serif);
+  font-size: var(--size-panel-cta);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  border-radius: var(--radius-full);
+  padding: 6px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border-style: solid;
+  border-width: var(--border-medium);
+}
