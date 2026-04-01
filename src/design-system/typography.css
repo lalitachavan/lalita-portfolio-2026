@@ -74,9 +74,9 @@ p {
 .hero-line-1 {
   font-family: var(--font-sans);
   font-size: var(--size-hero-line1);
-  font-weight: var(--weight-bold);
+  font-weight: var(--weight-semibold);
   line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-normal);
+  letter-spacing: var(--tracking-hero);
   color: var(--color-ink-primary);
 }
 
@@ -85,7 +85,7 @@ p {
   font-size: var(--size-hero-line2);
   font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-normal);
+  letter-spacing: var(--tracking-hero);
   color: var(--color-ink-primary);
 }
 
@@ -101,7 +101,8 @@ p {
   font-size: var(--size-annotation);
   font-weight: var(--weight-regular);
   line-height: var(--leading-normal);
-  color: var(--color-ink-tertiary);
+  letter-spacing: var(--tracking-snug);
+  color: var(--color-ink-secondary);
 }
 
 /* =============================================================
@@ -208,7 +209,6 @@ p {
   border-radius: var(--radius-full);
   min-height: var(--touch-target);
   padding: var(--pill-padding-y) var(--pill-padding-x);
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;

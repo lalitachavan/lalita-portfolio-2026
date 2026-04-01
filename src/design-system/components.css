@@ -29,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: var(--space-10);
+  padding-bottom: clamp(var(--space-10), 5vw, var(--space-20));
 }
 
 .nav-wordmark {
@@ -39,6 +39,16 @@
   color: var(--color-ink-muted);
   letter-spacing: var(--tracking-tight);
   text-decoration: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav-wordmark {
+    transition: transform var(--duration-fast) var(--easing-default);
+  }
+}
+
+.nav-wordmark:not([aria-current="page"]):hover {
+  transform: translateY(-1px);
 }
 
 /* Desktop link row */
@@ -59,7 +69,6 @@
   background: none;
   border: none;
   padding: var(--space-2);
-  cursor: pointer;
   color: var(--color-ink-primary);
   border-radius: var(--radius-sm);
 }
@@ -97,13 +106,15 @@
 @media (prefers-reduced-motion: no-preference) {
   .nav-link {
     transition: background var(--duration-fast) var(--easing-default),
-                color     var(--duration-fast) var(--easing-default);
+                color      var(--duration-fast) var(--easing-default),
+                transform  var(--duration-fast) var(--easing-default);
   }
 }
 
-.nav-link:hover {
-  background: rgba(26, 26, 26, 0.06);
+.nav-link:hover:not([aria-current="page"]) {
+  transform: translateY(-1px);
 }
+
 
 /* Mobile breakpoint */
 @media (max-width: 767px) {
@@ -115,6 +126,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+/* Tablet — 768–1023px: scrolling layout, tighten vertical rhythm */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-bar {
+    padding-bottom: var(--space-6);
+  }
+
+  :root {
+    --hero-gap: clamp(24px, 3.5vw, 48px);
+  }
+
+  /* Pin accordion to bottom — same pattern as desktop */
+  .accordion-wrapper {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: var(--space-6);
+  }
+
+  /* wrapper handles spacing — clear accordion's own margin-top */
+  .accordion {
+    margin-top: 0;
   }
 }
 
@@ -168,7 +205,6 @@
 
 .hero-text-block {
   flex: 0 0 auto;
-  cursor: default;
 }
 
 .hero-line-2-wrapper {
@@ -315,14 +351,12 @@
   flex-shrink: 0;
   width: var(--accordion-collapsed-w);
   height: 100%;
-  cursor: pointer;
   /* No overflow:hidden — content clipped by .panel-clip inside */
 }
 
 .accordion-panel.is-expanded {
   flex: 1;
   flex-shrink: 1;
-  cursor: default;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -356,14 +390,13 @@
 .panel-image-col {
   width: var(--accordion-image-col-w);
   flex-shrink: 0;
-  overflow: hidden;
-  padding: var(--accordion-image-padding-top) 0 0 var(--accordion-content-padding-x);
+  padding: var(--accordion-image-padding-top) var(--accordion-inner-gap) 0 var(--accordion-content-padding-x);
 }
 
 /* ── Right column — fades in when panel expands ── */
 .panel-content-col {
   width: var(--accordion-content-col-w);
-  padding: var(--accordion-content-padding-y) var(--accordion-content-padding-x-right) var(--accordion-content-padding-y) var(--accordion-content-padding-x);
+  padding: var(--accordion-content-padding-y) var(--accordion-content-padding-x-right) var(--accordion-content-padding-y) var(--accordion-inner-gap);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -400,15 +433,16 @@
 
 /* =============================================================
    PANEL LABEL — rotated collapsed state
-   Outside .panel-clip so it's never clipped.
+   Outside .panel-clip. top is set by JS to bottom-align all
+   labels at the same position. CSS default (50%) is the
+   fallback before JS measures.
    ============================================================= */
 
 .panel-label-rotated {
   position: absolute;
-  bottom: var(--panel-label-bottom);
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%) rotate(-90deg);
-  transform-origin: center center;
+  transform: translateX(-50%) translateY(-50%) rotate(-90deg);
   white-space: nowrap;
   pointer-events: none;
   z-index: 1;
@@ -440,7 +474,6 @@
   border-radius: var(--radius-full);
   border: none;
   padding: 0;
-  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -466,13 +499,17 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .pill {
-    transition: background var(--duration-default) var(--easing-default);
+    transition: background var(--duration-default) var(--easing-default),
+                box-shadow var(--duration-default) var(--easing-default),
+                transform  var(--duration-default) var(--easing-default);
   }
 }
 
 .pill:hover,
 .pill:focus-visible {
   background: var(--pill-hover-bg, transparent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-1px);
 }
 
 /* =============================================================

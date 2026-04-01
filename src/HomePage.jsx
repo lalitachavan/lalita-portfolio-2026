@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { colors, getPanelTokens, isLightPanel } from './design-system/tokens.js'
 
+
 const BRUSH_PATH = 'M 4,8 C 50,2 100,14 150,8 C 180,3 205,11 220,7'
 const BRUSH_FALLBACK_LENGTH = 230
 const DESKTOP_BREAKPOINT = '(min-width: 768px)'
@@ -18,13 +19,13 @@ const navLinks = [
   { label: 'LinkedIN', href: 'https://linkedin.com/in/lalitachavan', active: false },
 ]
 
-function Nav() {
+function Nav({ isHome = false }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <nav aria-label="Main navigation" className="nav-bar">
       {/* Wordmark */}
-      <a href="/" className="nav-wordmark focus-light">
+      <a href="/" className="nav-wordmark focus-light" aria-current={isHome ? 'page' : undefined}>
         Lalita Chavan
       </a>
 
@@ -226,13 +227,52 @@ function MascotSVG() {
 // =============================================================
 
 function PanelImage({ imageSrc, color }) {
+  const wrapperRef = useRef(null)
+  const imgRef     = useRef(null)
+  const [fits, setFits] = useState(false)
+
+  useEffect(() => {
+    if (!imageSrc) return
+    const wrapper = wrapperRef.current
+    const img     = imgRef.current
+    if (!wrapper || !img) return
+
+    const check = () => {
+      if (img.offsetHeight > 0) {
+        setFits(img.offsetHeight <= wrapper.offsetHeight)
+      }
+    }
+
+    const ro = new ResizeObserver(check)
+    ro.observe(wrapper)
+    img.addEventListener('load', check)
+    check()
+
+    return () => {
+      ro.disconnect()
+      img.removeEventListener('load', check)
+    }
+  }, [imageSrc])
+
   if (imageSrc) {
     return (
-      <img
-        src={imageSrc}
-        alt=""
-        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
-      />
+      <div
+        ref={wrapperRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: fits ? 'center' : 'flex-start',
+        }}
+      >
+        <img
+          ref={imgRef}
+          src={imageSrc}
+          alt=""
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+        />
+      </div>
     )
   }
 
@@ -250,6 +290,49 @@ function PanelImage({ imageSrc, color }) {
         backgroundSize: '24px 24px',
       }}
     />
+  )
+}
+
+// =============================================================
+// PANEL LABEL — measures its own width to bottom-align all labels
+// =============================================================
+
+function PanelLabel({ text, color }) {
+  const spanRef  = useRef(null)
+  const [top, setTop] = useState(null)
+  const isDesktop = useIsDesktop()
+
+  useEffect(() => {
+    const span = spanRef.current
+    if (!span || !span.parentElement || !isDesktop) {
+      setTop(null)
+      return
+    }
+
+    const PADDING = 16 // px gap between label visual bottom and panel bottom edge
+
+    const measure = () => {
+      const W      = span.offsetWidth               // pre-rotation text width
+      const panelH = span.parentElement.offsetHeight
+      // transform: translateY(-50%) means CSS `top` = visual center y.
+      // visual_bottom = top + W/2 → top = panelH - PADDING - W/2
+      setTop(Math.max(0, panelH - PADDING - W / 2))
+    }
+
+    const ro = new ResizeObserver(measure)
+    ro.observe(span.parentElement)
+    measure()
+    return () => ro.disconnect()
+  }, [text, isDesktop])
+
+  return (
+    <span
+      ref={spanRef}
+      className="panel-label-rotated panel-label"
+      style={{ color, ...(top !== null && { top: `${top}px` }) }}
+    >
+      {text}
+    </span>
   )
 }
 
@@ -394,13 +477,8 @@ function Accordion() {
               </div>
             </div>
 
-            {/* ── Rotated label (outside clip, always legible) ───── */}
-            <span
-              className="panel-label-rotated panel-label"
-              style={{ color: tok.text }}
-            >
-              {panel.label}
-            </span>
+            {/* ── Rotated label (outside clip, bottom-aligned) ────── */}
+            <PanelLabel text={panel.label} color={tok.text} />
 
             {/* ── Mascot (last panel only, when collapsed) ────────── */}
             {isLast && !isExpanded && (
@@ -436,24 +514,30 @@ function Hero() {
     if (!isDesktop) setIsHovered(false)
   }, [isDesktop])
 
-  const brushClass      = `brush-stroke ${isHovered ? 'visible' : 'hidden'}`
-  const annotationClass = `annotation ${isHovered ? 'visible' : 'hidden'}`
+  const brushClass       = `brush-stroke ${isHovered ? 'visible' : 'hidden'}`
+  const annotation1Class = `annotation ${isHovered === 1 ? 'visible' : 'hidden'}`
+  const annotation2Class = `annotation ${isHovered === 2 ? 'visible' : 'hidden'}`
 
   return (
     <section aria-label="Introduction" className="hero-section">
 
       {/* Left column — headline + hover trigger */}
-      <div
-        className="hero-text-block"
-        onMouseEnter={() => { if (isDesktop) setIsHovered(true) }}
-        onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
-      >
-        <p className="hero-line-1" style={{ marginBottom: 'var(--space-2)' }}>
+      <div className="hero-text-block">
+        <p
+          className="hero-line-1"
+          style={{ marginBottom: 'var(--space-2)' }}
+          onMouseEnter={() => { if (isDesktop) setIsHovered(1) }}
+          onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
+        >
           UX designer + Engineer
         </p>
 
-        <div className="hero-line-2-wrapper">
-          <p className="hero-line-2">Currently building with AI.</p>
+        <div
+          className="hero-line-2-wrapper"
+          onMouseEnter={() => { if (isDesktop) setIsHovered(2) }}
+          onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
+        >
+          <p className="hero-line-2">Currently building with AI</p>
 
           <svg
             aria-hidden="true"
@@ -479,11 +563,11 @@ function Hero() {
 
       {/* Right column — annotations (revealed on hover) */}
       <div className="hero-annotations">
-        <p className={annotationClass}>
+        <p className={annotation1Class}>
           3+ years of experience owning end-to-end UX.{' '}
           Designed products used by 7,000+ surgeons.
         </p>
-        <p className={annotationClass}>
+        <p className={annotation2Class}>
           Building a wedding guest list optimization tool using Claude Code.
         </p>
       </div>
@@ -596,7 +680,7 @@ function Dot({ color = 'var(--color-ink-muted)' }) {
 export default function HomePage() {
   return (
     <main className="page-layout">
-      <Nav />
+      <Nav isHome />
       <Hero />
       <div className="accordion-wrapper">
         <Accordion />

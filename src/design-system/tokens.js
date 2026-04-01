@@ -104,17 +104,17 @@ export const typography = {
 
   fontSize: {
     'hero-line1':   ['clamp(32px, 4vw, 52px)',   { lineHeight: '1.15' }],
-    'hero-line2':   ['clamp(30px, 3.8vw, 50px)', { lineHeight: '1.15' }],
-    'annotation':   ['clamp(13px, 1.2vw, 15px)', { lineHeight: '1.6'  }],
-    'nav':          ['14px', { lineHeight: '1.6' }],
-    'wordmark':     ['18px', { lineHeight: '1'   }],
-    'panel-label':  ['14px', { lineHeight: '1'   }],
+    'hero-line2':   ['clamp(28px, 3.8vw, 48px)', { lineHeight: '1.15' }],
+    'annotation':   ['clamp(15px, 1.5vw, 20px)', { lineHeight: '1.6'  }],
+    'nav':          ['clamp(12px, 1vw, 14px)',    { lineHeight: '1.6' }],
+    'wordmark':     ['clamp(14px, 1.2vw, 18px)', { lineHeight: '1'   }],
+    'panel-label':  ['clamp(20px, 2.5vw, 36px)', { lineHeight: '1' }],
     'panel-tag':    ['11px', { lineHeight: '1'   }],
     'panel-title':  ['clamp(16px, 1.8vw, 20px)', { lineHeight: '1.3'  }],
     'panel-desc':   ['13px', { lineHeight: '1.6' }],
-    'panel-client':   ['20px', { lineHeight: '1.4' }],
-    'panel-title-lg': ['24px', { lineHeight: '1.3' }],
-    'panel-desc-lg':  ['20px', { lineHeight: '1.6' }],
+    'panel-client':   ['clamp(13px, 1.4vw, 20px)', { lineHeight: '1.4' }],
+    'panel-title-lg': ['clamp(16px, 1.7vw, 24px)', { lineHeight: '1.3' }],
+    'panel-desc-lg':  ['clamp(13px, 1.4vw, 20px)', { lineHeight: '1.6' }],
     'panel-cta':    ['12px', { lineHeight: '1'   }],
     'body':         ['15px', { lineHeight: '1.6' }],
     'caption':      ['12px', { lineHeight: '1.6' }],
@@ -139,9 +139,10 @@ export const typography = {
     normal:        '0',
     snug:          '-0.5px',  // panel description
     tight:         '-1px',    // wordmark, panel title
+    hero:          '-2px',    // hero line 1
     wide:          '0.04em',
     wider:         '0.07em',  // uppercase tags
-    'panel-label': '-0.07em', // Geist semibold rotated labels only
+    'panel-label': '-1px',    // Geist semibold rotated labels only
   },
 }
 
@@ -166,11 +167,11 @@ export const spacing = {
 
   // Page layout
   'page-x':   'clamp(24px, 5vw, 80px)',
-  'page-top': 'clamp(24px, 4vw, 48px)',
+  'page-top': 'clamp(12px, 2vw, 24px)',
   'hero-gap': 'clamp(48px, 6vw, 96px)',
 
   // Hero internals
-  'hero-headline-gap':   '8px',
+  'hero-headline-gap':   '16px',
   'hero-annotation-gap': '12px',
   'hero-column-gap':     'clamp(40px, 5vw, 80px)',
 
@@ -182,7 +183,7 @@ export const spacing = {
   'accordion-padding':           '24px',
   'accordion-image-col-w':      '25%',
   'accordion-content-col-w':    '75%',
-  'panel-label-bottom':          '16px',
+  'panel-label-bottom':          'clamp(16px, 2vw, 24px)',
   'accordion-collapsed-h-mobile': '56px',
 }
 
@@ -324,9 +325,9 @@ export const components = {
 
   panelLabel: {
     font:      'sans',
-    size:      '14px',
+    size:      'clamp(20px, 2.5vw, 36px)',
     weight:    '600',
-    tracking:  '-0.07em',
+    tracking:  '-1px',
     colorDark: '#FFFFFF',
     colorLight:'#1A1A1A',
     rotation:  'rotate(-90deg)',

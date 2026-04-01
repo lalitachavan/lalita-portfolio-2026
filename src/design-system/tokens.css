@@ -80,17 +80,17 @@
      ----------------------------------------------------------- */
 
   --size-hero-line1:   clamp(32px, 4vw, 52px);
-  --size-hero-line2:   clamp(30px, 3.8vw, 50px);
-  --size-annotation:   clamp(13px, 1.2vw, 15px);
-  --size-nav:          14px;
-  --size-wordmark:     18px;
-  --size-panel-label:  14px;
+  --size-hero-line2:   clamp(28px, 3.8vw, 48px);
+  --size-annotation:   clamp(15px, 1.5vw, 20px);
+  --size-nav:          clamp(12px, 1vw, 14px);
+  --size-wordmark:     clamp(14px, 1.2vw, 18px);
+  --size-panel-label:  clamp(20px, 2.5vw, 36px);
   --size-panel-tag:    11px;
   --size-panel-title:  clamp(16px, 1.8vw, 20px);
   --size-panel-desc:   13px;
-  --size-panel-client: 20px;
-  --size-panel-title-lg:  24px;
-  --size-panel-desc-lg:   20px;
+  --size-panel-client:   clamp(13px, 1.4vw, 20px);
+  --size-panel-title-lg: clamp(16px, 1.7vw, 24px);
+  --size-panel-desc-lg:  clamp(13px, 1.4vw, 20px);
   --tracking-snug:        -0.5px;
   --size-panel-cta:    12px;
   --size-body:         15px;
@@ -124,7 +124,8 @@
   --tracking-wide:         0.04em;
   --tracking-wider:        0.07em;  /* uppercase tags */
   --tracking-tight:        -1px;     /* wordmark */
-  --tracking-panel-label: -0.07em;  /* Geist semibold rotated labels only */
+  --tracking-hero:         -2px;     /* hero line 1 */
+  --tracking-panel-label: -1px;     /* Geist semibold rotated labels only */
 
   /* -----------------------------------------------------------
      SPACING — Base unit: 4px
@@ -145,11 +146,11 @@
 
   /* Page layout */
   --page-padding-x:   clamp(24px, 5vw, 80px);
-  --page-padding-top: clamp(24px, 4vw, 48px);
+  --page-padding-top: clamp(12px, 2vw, 24px);
   --hero-gap:         clamp(48px, 6vw, 96px);
 
   /* Hero internals */
-  --hero-headline-gap:  8px;
+  --hero-headline-gap:  16px;
   --hero-annotation-gap: 12px;
   --hero-column-gap:    clamp(40px, 5vw, 80px);
 
@@ -161,11 +162,12 @@
   --accordion-padding:            24px;
   --accordion-image-col-w:        25%;
   --accordion-content-col-w:      75%;
-  --accordion-content-padding-x:  var(--space-10);
-  --accordion-content-padding-x-right: var(--space-16);
-  --accordion-content-padding-y:  var(--space-8);
-  --accordion-image-padding-top:  var(--space-4);
-  --panel-label-bottom:           16px;
+  --accordion-content-padding-x:       clamp(16px, 2.5vw, 40px);
+  --accordion-content-padding-x-right: clamp(24px, 4vw, 64px);
+  --accordion-inner-gap:               clamp(8px, 1.2vw, 16px);
+  --accordion-content-padding-y:       clamp(16px, 2vw, 32px);
+  --accordion-image-padding-top:       clamp(8px, 1vw, 16px);
+  --panel-label-bottom:           clamp(16px, 2vw, 24px);
   --accordion-collapsed-h-mobile: 56px;
 
   /* -----------------------------------------------------------
