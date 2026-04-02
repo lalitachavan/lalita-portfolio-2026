@@ -4,11 +4,14 @@ import './index.css'
 import HomePage from './HomePage'
 
 // Module-level: runs once before React, never cleaned up
+// Inline style with !important on <html> is the highest possible CSS priority
+document.documentElement.style.setProperty('cursor', 'none', 'important')
+
 const cursorStyle = document.createElement('style')
 cursorStyle.textContent = '* { cursor: none !important; }'
 document.head.appendChild(cursorStyle)
 
-const INTERACTIVE = 'a, button, [role="tab"], [role="button"], .hero-text-block'
+const INTERACTIVE = 'a, button, [role="tab"], [role="button"], .hero-line-1, .hero-line-2'
 
 function CursorDot() {
   const dotRef = useRef(null)
@@ -17,17 +20,19 @@ function CursorDot() {
     const dot = dotRef.current
     if (!dot) return
 
+    let x = -100, y = -100
+
     const move = (e) => {
+      x = e.clientX
+      y = e.clientY
       dot.style.opacity = '1'
-      dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`
+      dot.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0)`
     }
 
     const grow = (e) => {
       if (e.currentTarget.classList.contains('is-expanded')) return
       dot.style.width = '40px'
       dot.style.height = '40px'
-      dot.style.marginLeft = '-20px'
-      dot.style.marginTop = '-20px'
       dot.style.mixBlendMode = 'difference'
       dot.style.background = '#ffffff'
     }
@@ -35,8 +40,6 @@ function CursorDot() {
     const shrink = () => {
       dot.style.width = '16px'
       dot.style.height = '16px'
-      dot.style.marginLeft = '-8px'
-      dot.style.marginTop = '-8px'
       dot.style.mixBlendMode = 'normal'
       dot.style.background = 'var(--color-ink-primary)'
     }
@@ -76,10 +79,8 @@ function CursorDot() {
         pointerEvents: 'none',
         zIndex: 9999,
         opacity: 0,
-        transform: 'translate(-100px, -100px)',
-        marginLeft: '-8px',
-        marginTop: '-8px',
-        transition: 'width 200ms ease, height 200ms ease, margin 200ms ease, background 200ms ease',
+        transform: 'translate(-50%, -50%) translate3d(-100px, -100px, 0)',
+        transition: 'width 200ms ease, height 200ms ease, background 200ms ease',
       }}
     />
   )

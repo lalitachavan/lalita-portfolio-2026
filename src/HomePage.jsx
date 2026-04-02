@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { colors, getPanelTokens, isLightPanel } from './design-system/tokens.js'
 
 
-const BRUSH_PATH = 'M 4,8 C 50,2 100,14 150,8 C 180,3 205,11 220,7'
-const BRUSH_FALLBACK_LENGTH = 230
 const DESKTOP_BREAKPOINT = '(min-width: 768px)'
 
 // =============================================================
@@ -365,17 +363,12 @@ function Accordion() {
     >
       {panels.map((panel, index) => {
         const isExpanded = activePanel === panel.id
-        const isFirst    = index === 0
         const isLast     = index === panels.length - 1
         const tok        = getPanelTokens(panel.color)
 
-        // Rounded corners on first/last panel only — handled on
-        // .panel-clip so the mascot (outside the clip) can peek above.
-        const clipRadius = isFirst
-          ? 'var(--accordion-radius) 0 0 var(--accordion-radius)'
-          : isLast
-            ? '0 var(--accordion-radius) var(--accordion-radius) 0'
-            : '0'
+        const clipRadius = isExpanded
+          ? 'var(--accordion-radius)'
+          : 'var(--accordion-radius) 0 0 var(--accordion-radius)'
 
         return (
           <div
@@ -387,7 +380,7 @@ function Accordion() {
             tabIndex={isExpanded ? 0 : -1}
             ref={el => { tabRefs.current[index] = el }}
             className={`accordion-panel focus-dark ${isExpanded ? 'is-expanded' : ''}`}
-            style={{ backgroundColor: panel.color }}
+            style={{ backgroundColor: panel.color, borderRadius: clipRadius, zIndex: index + 1 }}
             onClick={() => setActivePanel(panel.id)}
             onKeyDown={(e) => handleKeyDown(e, index)}
           >
@@ -501,76 +494,52 @@ function Accordion() {
 function Hero() {
   const isDesktop = useIsDesktop()
   const [isHovered, setIsHovered] = useState(false)
-  const brushPathRef = useRef(null)
-  const [brushLength, setBrushLength] = useState(BRUSH_FALLBACK_LENGTH)
-
-  useEffect(() => {
-    if (brushPathRef.current) {
-      setBrushLength(Math.ceil(brushPathRef.current.getTotalLength()))
-    }
-  }, [])
-
   useEffect(() => {
     if (!isDesktop) setIsHovered(false)
   }, [isDesktop])
 
-  const brushClass       = `brush-stroke ${isHovered ? 'visible' : 'hidden'}`
   const annotation1Class = `annotation ${isHovered === 1 ? 'visible' : 'hidden'}`
   const annotation2Class = `annotation ${isHovered === 2 ? 'visible' : 'hidden'}`
 
   return (
     <section aria-label="Introduction" className="hero-section">
 
-      {/* Left column — headline + hover trigger */}
-      <div className="hero-text-block">
-        <p
-          className="hero-line-1"
-          style={{ marginBottom: 'var(--space-2)' }}
-          onMouseEnter={() => { if (isDesktop) setIsHovered(1) }}
-          onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
-        >
-          UX designer + Engineer
-        </p>
+      {/* Row 1 col 1 — hero line 1 */}
+      <p
+        className="hero-line-1 hero-text-block"
+        style={{ gridColumn: 1, gridRow: 1, marginTop: 'var(--space-5)' }}
+        onMouseEnter={() => { if (isDesktop) setIsHovered(1) }}
+        onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
+      >
+        UX designer + Engineer
+      </p>
 
-        <div
-          className="hero-line-2-wrapper"
-          onMouseEnter={() => { if (isDesktop) setIsHovered(2) }}
-          onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
-        >
-          <p className="hero-line-2">Currently building with AI</p>
+      {/* Row 1 col 2 — annotation 1 */}
+      <p
+        className={annotation1Class}
+        style={{ gridColumn: 2, gridRow: 1, maxWidth: '440px', marginTop: 'var(--space-5)', alignSelf: 'end' }}
+      >
+        <span style={{ fontWeight: 'var(--weight-semibold)' }}>3+ years</span> of experience owning end-to-end UX.{' '}
+        Designed products used by <span style={{ fontWeight: 'var(--weight-semibold)' }}>7,000+ surgeons</span>.
+      </p>
 
-          <svg
-            aria-hidden="true"
-            className="brush-svg"
-            width="220"
-            height="20"
-            viewBox="0 0 220 20"
-            style={{ '--brush-length': brushLength }}
-          >
-            <path
-              ref={brushPathRef}
-              className={brushClass}
-              d={BRUSH_PATH}
-              stroke="var(--color-accent-brush)"
-              strokeOpacity="0.75"
-              strokeWidth="10"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </svg>
-        </div>
-      </div>
+      {/* Row 2 col 1 — hero line 2 */}
+      <p
+        className="hero-line-2 hero-text-block"
+        style={{ gridColumn: 1, gridRow: 2 }}
+        onMouseEnter={() => { if (isDesktop) setIsHovered(2) }}
+        onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
+      >
+        Currently building with AI
+      </p>
 
-      {/* Right column — annotations (revealed on hover) */}
-      <div className="hero-annotations">
-        <p className={annotation1Class}>
-          3+ years of experience owning end-to-end UX.{' '}
-          Designed products used by 7,000+ surgeons.
-        </p>
-        <p className={annotation2Class}>
-          Building a wedding guest list optimization tool using Claude Code.
-        </p>
-      </div>
+      {/* Row 2 col 2 — annotation 2 */}
+      <p
+        className={annotation2Class}
+        style={{ gridColumn: 2, gridRow: 2, maxWidth: '440px' }}
+      >
+        Building a wedding guest list optimization tool using <span style={{ fontWeight: 'var(--weight-semibold)' }}>Claude Code</span>.
+      </p>
 
     </section>
   )

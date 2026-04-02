@@ -197,46 +197,17 @@
    ============================================================= */
 
 .hero-section {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: var(--hero-column-gap);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--hero-column-gap);
+  row-gap: var(--space-4);
+  align-items: start;
 }
 
-.hero-text-block {
-  flex: 0 0 auto;
-}
-
-.hero-line-2-wrapper {
-  position: relative;
-  display: block;
-  width: fit-content;
-}
-
-.brush-svg {
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.hero-annotations {
-  flex: 1;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  gap: var(--hero-annotation-gap);
-}
 
 @media (max-width: 767px) {
   .hero-section {
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .hero-annotations {
-    max-width: 100%;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -277,44 +248,35 @@
 .annotation {
   opacity: 0;
   pointer-events: none;
-  transform: translateY(4px);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .annotation.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-    transition:
-      opacity   250ms ease-out 80ms,
-      transform 250ms ease-out 80ms;
-  }
+.annotation.visible {
+  opacity: 1;
+  pointer-events: auto;
+  animation: annotation-wipe 400ms cubic-bezier(0.77, 0, 0.175, 1) both;
+}
 
-  .annotation.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(4px);
-    transition:
-      opacity   150ms ease-out,
-      transform 150ms ease-out;
-  }
+.annotation.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+
+@keyframes annotation-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .annotation {
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-  }
+  .annotation { opacity: 1; pointer-events: auto; }
+  .annotation.visible { animation: none; }
+  .annotation.hidden { opacity: 1; transition: none; }
 }
 
 @media (max-width: 767px) {
-  .annotation {
-    opacity: 1;
-    pointer-events: auto;
-    transform: none;
-    transition: none;
-  }
+  .annotation { opacity: 1; pointer-events: auto; }
+  .annotation.visible { animation: none; }
+  .annotation.hidden { opacity: 1; transition: none; }
 }
 
 /* =============================================================
@@ -351,7 +313,12 @@
   flex-shrink: 0;
   width: var(--accordion-collapsed-w);
   height: 100%;
+  margin-left: calc(var(--accordion-radius) * -1);
   /* No overflow:hidden — content clipped by .panel-clip inside */
+}
+
+.accordion-panel:first-child {
+  margin-left: 0;
 }
 
 .accordion-panel.is-expanded {
