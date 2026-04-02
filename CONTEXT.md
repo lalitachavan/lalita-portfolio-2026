@@ -14,7 +14,7 @@ All four files complete:
 - **`tokens.css`** — CSS custom properties on `:root`. Covers colors, typography, spacing, border radius, borders, animation durations/easings, layout, mascot, dots.
 - **`tokens.js`** — JS exports matching `tokens.css` exactly. Named exports: `colors`, `typography`, `spacing`, `borderRadius`, `borders`, `animation`, `components`, `layout`. Also exports `getPanelTokens(color)` and `isLightPanel(color)` helpers.
 - **`typography.css`** — Single Google Fonts `@import` for Geist (400/600/700) + Lora (400/400i/500i/700). Base reset, all type classes.
-- **`components.css`** — Page layout, nav, hero grid layout, annotation clip-path wipe, accordion (desktop + mobile), panel label rotation, pill button, mascot.
+- **`components.css`** — Page layout, nav, hero grid layout, annotation clip-path wipe, accordion (desktop + mobile), panel label rotation, pill button.
 
 ### Scaffold
 
@@ -41,10 +41,10 @@ All four files complete:
 - Line 1: Geist semibold, `--size-hero-line1` (clamp 32–52px), `-2px` tracking, `ink-primary`, `marginTop: var(--space-5)`
 - Line 2: Lora regular, `--size-hero-line2` (clamp 28–46px), `-1px` tracking (`--tracking-tight`), `ink-tertiary`
 - Brush stroke removed
-- Annotation 1 (row 1, col 2): triggered by hovering line 1, `alignSelf: end` (bottom-aligns to line 1), `maxWidth: 440px`
-- Annotation 2 (row 2, col 2): triggered by hovering line 2, `maxWidth: 440px`
-- Annotations: Lora regular, clamp(15–18px), `--leading-snug` (1.3), `-0.5px` tracking, `ink-primary`
-- "3+ years" and "7,000+ surgeons" semibold in annotation 1; "Claude Code" semibold in annotation 2
+- Annotation 1 (row 1, col 2): pull quote with green accent bar, triggered by hovering line 1, `alignSelf: end`, `maxWidth: 440px`
+- Annotation 2 (row 2, col 2): pull quote with green accent bar, triggered by hovering line 2, `maxWidth: 440px`
+- Both annotations: Lora italic, clamp(15–18px), `--leading-snug` (1.3), `-0.5px` tracking, `ink-secondary`, 3px `accent-brush` left bar
+- "3+ years" and "7,000+ surgeons" semibold upright in annotation 1; "Claude Code" semibold upright in annotation 2
 - Annotation reveal: `@keyframes annotation-wipe` — `clip-path: inset(0 100% 0 0)` → `inset(0 0% 0 0)` (400ms, accordion easing). Hide: opacity fade 150ms.
 - `useIsDesktop()` hook — `matchMedia('(min-width: 768px)')` prevents hover at narrow widths
 - Mobile: single column grid, annotations always visible, no animation
@@ -52,13 +52,13 @@ All four files complete:
 **Accordion**
 - 4 panels (left to right): Design system (orange), Usability study (magenta), Chatbot design (yellow), Mobile-first design (green)
 - Default expanded: last panel (Mobile-first design, green)
-- Stacked card look: panels overlap via `margin-left: calc(var(--accordion-radius) * -1)`, `z-index: index + 1`
+- Stacked card look: panels overlap via `margin-left: calc(var(--accordion-radius) * -1)`, `z-index: index + 1`, collapsed-w: 80px
 - Collapsed panels: left corners rounded only (`var(--accordion-radius) 0 0 var(--accordion-radius)`)
 - Expanded panel: all four corners rounded (`var(--accordion-radius)`)
 - `borderRadius` applied to both outer `.accordion-panel` div AND `.panel-clip` div
 - Panel labels: Geist semibold, clamp(20–36px), `-1px` tracking, bottom-aligned via JS `ResizeObserver`
 - Label inside `.panel-clip` — clipped naturally at panel bounds (matches Figma)
-- `overflow: hidden` on `.panel-clip` inside each panel (not accordion itself) — mascot can peek above
+- `overflow: hidden` on `.panel-clip` inside each panel
 - Image column: 25%, content column: 75%
 - Content right padding: `clamp(48px, 8vw, 140px)` — narrower text area
 - Image: `width: 100%; height: auto` — no side clipping
@@ -67,7 +67,8 @@ All four files complete:
 - `PanelLabel` component measures rendered text width via `ResizeObserver` to bottom-align all labels consistently
 - Keyboard: Arrow Left/Right navigates, Enter/Space expands
 - ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`
-- Mascot: last panel only, spring easing, hidden when expanded, hidden on mobile
+- Collapsed panel hover: `translateX(-16px)` slides panel left to reveal label (no width change — no layout shift)
+- Mascot removed (will be re-added later)
 
 **Expanded panel content:**
 - Client + year: Lora medium italic (500), clamp(13–20px), `--tracking-tight`, dot separator
@@ -126,8 +127,11 @@ All four files complete:
 | Brush stroke removed | Per user request |
 | Hero line 2: Lora regular, clamp(28–46px), -1px tracking, ink-tertiary | Per user request — subtler than line 1 |
 | Annotation font: clamp(15–18px), line-height 1.3, ink-primary | Reduced from 20px; tighter line-height prevents row height shift in grid |
-| Semibold keywords in annotations | "3+ years", "7,000+ surgeons", "Claude Code" — editorial emphasis |
-| Stacked card accordion: negative margin overlap | Creates layered card look without gaps between panels |
+| Annotations as pull quotes with accent bar | Lora italic + 3px green bar — editorial callout style |
+| Semibold keywords in annotations | "3+ years", "7,000+ surgeons", "Claude Code" — upright for emphasis |
+| Stacked card accordion: negative margin overlap | Creates layered card look; collapsed-w 80px covers expanded panel's rounded edge |
+| Collapsed hover: translateX instead of width | No layout shift — expanded panel content stays still |
+| Mascot removed temporarily | Will be re-added later per user request |
 | Collapsed panels: left corners only rounded | Reinforces stacked card metaphor |
 | Framer-style cursor: `translate(-50%, -50%) translate3d()` | Centering in transform eliminates margin changes during grow/shrink |
 | Two-layer cursor hiding | Inline `!important` on `<html>` + stylesheet for maximum specificity |

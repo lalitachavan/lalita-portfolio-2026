@@ -194,33 +194,6 @@ function useIsDesktop() {
 }
 
 // =============================================================
-// MASCOT SVG
-// =============================================================
-
-function MascotSVG() {
-  return (
-    <svg
-      width="40"
-      height="36"
-      viewBox="0 0 40 36"
-      fill="none"
-      stroke="var(--mascot-stroke)"
-      strokeWidth="var(--mascot-stroke-width)"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polygon points="6,16 10,3 17,12"  />              {/* left ear  */}
-      <polygon points="34,16 30,3 23,12" />              {/* right ear */}
-      <circle cx="20" cy="22" r="13" />                  {/* head      */}
-      <circle cx="15" cy="20" r="2" fill="var(--mascot-stroke)" stroke="none" /> {/* left eye  */}
-      <circle cx="25" cy="20" r="2" fill="var(--mascot-stroke)" stroke="none" /> {/* right eye */}
-      <path d="M 15,26 Q 20,30 25,26" />                 {/* smile     */}
-    </svg>
-  )
-}
-
-// =============================================================
 // PANEL IMAGE (or placeholder)
 // =============================================================
 
@@ -363,7 +336,6 @@ function Accordion() {
     >
       {panels.map((panel, index) => {
         const isExpanded = activePanel === panel.id
-        const isLast     = index === panels.length - 1
         const tok        = getPanelTokens(panel.color)
 
         const clipRadius = isExpanded
@@ -473,12 +445,6 @@ function Accordion() {
             {/* ── Rotated label (outside clip, bottom-aligned) ────── */}
             <PanelLabel text={panel.label} color={tok.text} />
 
-            {/* ── Mascot (last panel only, when collapsed) ────────── */}
-            {isLast && !isExpanded && (
-              <div className="mascot" aria-hidden="true">
-                <MascotSVG />
-              </div>
-            )}
 
           </div>
         )
@@ -514,14 +480,32 @@ function Hero() {
         UX designer + Engineer
       </p>
 
-      {/* Row 1 col 2 — annotation 1 */}
-      <p
+      {/* Row 1 col 2 — annotation 1: pull quote with accent bar */}
+      <div
         className={annotation1Class}
-        style={{ gridColumn: 2, gridRow: 1, maxWidth: '440px', marginTop: 'var(--space-5)', alignSelf: 'end' }}
+        style={{
+          gridColumn: 2, gridRow: 1, alignSelf: 'end', maxWidth: '440px',
+          display: 'flex', gap: 'var(--space-4)',
+        }}
       >
-        <span style={{ fontWeight: 'var(--weight-semibold)' }}>3+ years</span> of experience owning end-to-end UX.{' '}
-        Designed products used by <span style={{ fontWeight: 'var(--weight-semibold)' }}>7,000+ surgeons</span>.
-      </p>
+        <div style={{
+          width: '3px',
+          flexShrink: 0,
+          borderRadius: 'var(--radius-full)',
+          background: 'var(--color-accent-brush)',
+        }} />
+        <p className="annotation" style={{
+          opacity: 1, pointerEvents: 'auto',
+          fontFamily: 'var(--font-serif)',
+          fontStyle: 'italic',
+          fontSize: 'var(--size-annotation)',
+          lineHeight: 'var(--leading-snug)',
+          letterSpacing: 'var(--tracking-snug)',
+          color: 'var(--color-ink-secondary)',
+        }}>
+          <span style={{ fontWeight: 'var(--weight-semibold)', fontStyle: 'normal' }}>3+ years</span> of experience owning end-to-end UX and designing for <span style={{ fontWeight: 'var(--weight-semibold)', fontStyle: 'normal' }}>7,000+ surgeons</span>.
+        </p>
+      </div>
 
       {/* Row 2 col 1 — hero line 2 */}
       <p
@@ -533,13 +517,32 @@ function Hero() {
         Currently building with AI
       </p>
 
-      {/* Row 2 col 2 — annotation 2 */}
-      <p
+      {/* Row 2 col 2 — annotation 2: pull quote with accent bar */}
+      <div
         className={annotation2Class}
-        style={{ gridColumn: 2, gridRow: 2, maxWidth: '440px' }}
+        style={{
+          gridColumn: 2, gridRow: 2, maxWidth: '440px',
+          display: 'flex', gap: 'var(--space-4)',
+        }}
       >
-        Building a wedding guest list optimization tool using <span style={{ fontWeight: 'var(--weight-semibold)' }}>Claude Code</span>.
-      </p>
+        <div style={{
+          width: '3px',
+          flexShrink: 0,
+          borderRadius: 'var(--radius-full)',
+          background: 'var(--color-accent-brush)',
+        }} />
+        <p className="annotation" style={{
+          opacity: 1, pointerEvents: 'auto',
+          fontFamily: 'var(--font-serif)',
+          fontStyle: 'italic',
+          fontSize: 'var(--size-annotation)',
+          lineHeight: 'var(--leading-snug)',
+          letterSpacing: 'var(--tracking-snug)',
+          color: 'var(--color-ink-secondary)',
+        }}>
+          Building a wedding guest list optimization tool using <span style={{ fontWeight: 'var(--weight-semibold)', fontStyle: 'normal' }}>Claude Code</span>.
+        </p>
+      </div>
 
     </section>
   )

@@ -156,7 +156,7 @@
 
   /* Accordion */
   --accordion-height:             340px;
-  --accordion-collapsed-w:        60px;
+  --accordion-collapsed-w:        80px;
   --accordion-hover-w:            72px;
   --accordion-radius:             16px;
   --accordion-padding:            24px;

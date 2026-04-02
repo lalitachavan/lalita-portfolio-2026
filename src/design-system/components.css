@@ -328,12 +328,12 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .accordion-panel {
-    transition: width var(--duration-accordion) var(--easing-accordion);
+    transition: width var(--duration-accordion) var(--easing-accordion),
+                transform 200ms ease-out;
   }
 
   .accordion-panel:hover:not(.is-expanded) {
-    width: var(--accordion-hover-w);
-    transition: width 200ms ease-out;
+    transform: translateX(calc(var(--accordion-radius) * -1));
   }
 }
 
