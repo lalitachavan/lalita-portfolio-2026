@@ -36,9 +36,9 @@ All four files complete:
 - Mobile: hamburger menu — white dropdown, X icon when open
 
 **Hero**
-- CSS Grid layout: 2 columns (`auto 1fr`), 2 rows, `row-gap: var(--space-4)`, `align-items: start`
+- CSS Grid layout: 2 columns (`auto 1fr`), 2 rows, `row-gap: var(--space-2)` (8px), `align-items: center`
 - Explicit `gridColumn`/`gridRow` on every element to prevent auto-placement issues
-- Line 1: Geist semibold, `--size-hero-line1` (clamp 32–52px), `-2px` tracking, `ink-primary`, `marginTop: var(--space-5)`
+- Line 1: Geist semibold, `--size-hero-line1` (clamp 32–52px), `-2px` tracking, `ink-primary`
 - Line 2: Lora regular, `--size-hero-line2` (clamp 28–46px), `-1px` tracking (`--tracking-tight`), `ink-tertiary`
 - Brush stroke removed
 - Annotation 1 (row 1, col 2): pull quote with green accent bar, triggered by hovering line 1, `alignSelf: end`, `maxWidth: 440px`
@@ -69,6 +69,9 @@ All four files complete:
 - ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`
 - Collapsed panel hover: `translateX(-16px)` slides panel left to reveal label (no width change — no layout shift)
 - Mascot removed (will be re-added later)
+- `ExpandedPanelLabel` — rotated watermark on bottom-right of expanded panel, same JS `ResizeObserver` bottom-alignment as collapsed labels (16px padding), pinned to `right: 16px`
+- Per-panel `expandedLabelColor` — hue-matched muted tones at 40% opacity (e.g. green: `rgba(82, 84, 18, 0.4)`)
+- Fades in with panel content (300ms, 250ms delay), hidden on mobile
 
 **Expanded panel content:**
 - Client + year: Lora medium italic (500), clamp(13–20px), `--tracking-tight`, dot separator
@@ -80,11 +83,15 @@ All four files complete:
 
 **Custom cursor (`src/main.jsx`)**
 - 16px dark dot, `position: fixed`, `pointer-events: none`
+- Guarded behind `@media (pointer: fine)` — touch/stylus users keep system cursor
+- `hasFinePointer` state tracks `matchMedia` changes (e.g. docking a tablet)
+- Cursor hide style injected/removed via `useEffect` cleanup — no leaked global styles
+- Event delegation (`mouseover`/`mouseout` on `document`) instead of per-element listeners — survives React re-renders
 - Framer-style positioning: `translate(-50%, -50%) translate3d(x, y, 0)` — centering baked into transform, no margin changes
 - Follows mouse via `mousemove`, hides on `mouseleave`
 - Hover state on `a`, `button`, `[role="tab"]`, `[role="button"]`, `.hero-line-1`, `.hero-line-2`: grows to 40px, white with `mix-blend-mode: difference`
 - Expanded accordion panel (`is-expanded`) excluded from cursor growth
-- Two-layer cursor hiding: inline style `!important` on `<html>` + `* { cursor: none !important; }` stylesheet
+- Returns `null` when no fine pointer — no DOM node rendered
 - CSS transition on width/height/background for smooth scale
 
 **Footer**
@@ -122,7 +129,7 @@ All four files complete:
 | Hero annotations split per line | Line 1 → annotation 1, line 2 → annotation 2 |
 | `isHome` prop on Nav | Enables per-page wordmark hover control without hardcoding |
 | No translate on active nav link or home wordmark | Active items shouldn't suggest clickability |
-| Hero grid layout with explicit placement | Flex columns caused alignment issues; grid with `align-items: start` prevents layout shift |
+| Hero grid layout with explicit placement | Flex columns caused alignment issues; grid with `align-items: center` keeps annotations aligned with hero lines |
 | Annotation reveal: `@keyframes` clip-path wipe | CSS transitions unreliable from hidden state; keyframes always play fresh |
 | Brush stroke removed | Per user request |
 | Hero line 2: Lora regular, clamp(28–46px), -1px tracking, ink-tertiary | Per user request — subtler than line 1 |
@@ -137,6 +144,12 @@ All four files complete:
 | Two-layer cursor hiding | Inline `!important` on `<html>` + stylesheet for maximum specificity |
 | Content column right padding: clamp(48–140px) | Narrower text area for better readability |
 | `--hero-gap` reduced to clamp(24–48px) | Was clamp(48–96px) — too much space between hero and accordion |
+| Hero row-gap 8px, align-items center | Tighter headline pair; annotations vertically center with their hero line |
+| Custom cursor guarded by `(pointer: fine)` | Touch/stylus users keep system cursor; dynamic via matchMedia listener |
+| Cursor uses event delegation | `mouseover`/`mouseout` on document — survives React re-renders, no stale bindings |
+| Cursor hide style via useEffect cleanup | Reversible — no permanently leaked global `cursor: none` |
+| Expanded panel watermark label | Same ResizeObserver bottom-alignment as collapsed labels, pinned right |
+| Per-panel `expandedLabelColor` at 40% opacity | Hue-matched to panel color, acts as subtle watermark without competing with content |
 
 ---
 

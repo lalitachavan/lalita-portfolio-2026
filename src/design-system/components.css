@@ -200,8 +200,8 @@
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: var(--hero-column-gap);
-  row-gap: var(--space-4);
-  align-items: start;
+  row-gap: var(--space-2);
+  align-items: center;
 }
 
 
@@ -423,6 +423,49 @@
 
 .accordion-panel.is-expanded .panel-label-rotated {
   opacity: 0;
+}
+
+/* =============================================================
+   EXPANDED LABEL — bottom-right watermark inside .panel-clip
+   Only visible when the panel is expanded.
+   ============================================================= */
+
+.expanded-label {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  left: auto;
+  transform: translateX(50%) translateY(-50%) rotate(-90deg);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+}
+
+.accordion-panel.is-expanded .expanded-label {
+  opacity: 1;
+}
+
+/* Hide the collapsed label when expanded (already handled),
+   and hide the expanded label when collapsed */
+.accordion-panel:not(.is-expanded) .expanded-label {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .expanded-label {
+    transition: opacity 300ms ease-out 250ms;
+  }
+
+  .accordion-panel:not(.is-expanded) .expanded-label {
+    transition: opacity 150ms ease-out;
+  }
+}
+
+@media (max-width: 767px) {
+  .expanded-label {
+    display: none;
+  }
 }
 
 /* =============================================================

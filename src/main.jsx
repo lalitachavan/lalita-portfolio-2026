@@ -1,24 +1,39 @@
-import { StrictMode, useRef, useEffect } from 'react'
+import { StrictMode, useRef, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import HomePage from './HomePage'
-
-// Module-level: runs once before React, never cleaned up
-// Inline style with !important on <html> is the highest possible CSS priority
-document.documentElement.style.setProperty('cursor', 'none', 'important')
-
-const cursorStyle = document.createElement('style')
-cursorStyle.textContent = '* { cursor: none !important; }'
-document.head.appendChild(cursorStyle)
 
 const INTERACTIVE = 'a, button, [role="tab"], [role="button"], .hero-line-1, .hero-line-2'
 
 function CursorDot() {
   const dotRef = useRef(null)
+  const [hasFinePointer, setHasFinePointer] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
+  )
 
+  // Track pointer capability changes (e.g. docking a tablet)
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: fine)')
+    const handler = (e) => setHasFinePointer(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
+  // Hide system cursor only when fine pointer is available
+  useEffect(() => {
+    if (!hasFinePointer) return
+
+    const style = document.createElement('style')
+    style.textContent = '* { cursor: none !important; }'
+    document.head.appendChild(style)
+
+    return () => { style.remove() }
+  }, [hasFinePointer])
+
+  // Cursor movement + interactive hover via event delegation
   useEffect(() => {
     const dot = dotRef.current
-    if (!dot) return
+    if (!dot || !hasFinePointer) return
 
     let x = -100, y = -100
 
@@ -29,40 +44,43 @@ function CursorDot() {
       dot.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, 0)`
     }
 
-    const grow = (e) => {
-      if (e.currentTarget.classList.contains('is-expanded')) return
+    const hide = () => { dot.style.opacity = '0' }
+
+    // Event delegation — works even after React re-renders
+    const onOver = (e) => {
+      const interactive = e.target.closest(INTERACTIVE)
+      if (!interactive || interactive.classList.contains('is-expanded')) return
       dot.style.width = '40px'
       dot.style.height = '40px'
       dot.style.mixBlendMode = 'difference'
       dot.style.background = '#ffffff'
     }
 
-    const shrink = () => {
+    const onOut = (e) => {
+      const interactive = e.target.closest(INTERACTIVE)
+      if (!interactive) return
+      // Only shrink if we're actually leaving the interactive element
+      if (interactive.contains(e.relatedTarget)) return
       dot.style.width = '16px'
       dot.style.height = '16px'
       dot.style.mixBlendMode = 'normal'
       dot.style.background = 'var(--color-ink-primary)'
     }
 
-    const hide = () => { dot.style.opacity = '0' }
-
-    document.querySelectorAll(INTERACTIVE).forEach((el) => {
-      el.addEventListener('mouseenter', grow)
-      el.addEventListener('mouseleave', shrink)
-    })
-
     window.addEventListener('mousemove', move, { passive: true })
+    document.addEventListener('mouseover', onOver, { passive: true })
+    document.addEventListener('mouseout', onOut, { passive: true })
     document.documentElement.addEventListener('mouseleave', hide)
 
     return () => {
       window.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseover', onOver)
+      document.removeEventListener('mouseout', onOut)
       document.documentElement.removeEventListener('mouseleave', hide)
-      document.querySelectorAll(INTERACTIVE).forEach((el) => {
-        el.removeEventListener('mouseenter', grow)
-        el.removeEventListener('mouseleave', shrink)
-      })
     }
-  }, [])
+  }, [hasFinePointer])
+
+  if (!hasFinePointer) return null
 
   return (
     <div

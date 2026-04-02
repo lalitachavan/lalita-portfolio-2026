@@ -105,6 +105,7 @@ const panels = [
     id: 0,
     label: 'Design system',
     color: colors['panel-orange'],
+    expandedLabelColor: 'rgba(100, 30, 10, 0.4)',
     client: 'Royal Australasian College of Surgeons (RACS)',
     year: '2023',
     title: "Building the organization's first design system",
@@ -119,6 +120,7 @@ const panels = [
     id: 1,
     label: 'Usability study',
     color: colors['panel-magenta'],
+    expandedLabelColor: 'rgba(80, 15, 45, 0.4)',
     client: 'Airpals',
     year: '2022',
     title: 'Usability testing for a logistics startup',
@@ -133,6 +135,7 @@ const panels = [
     id: 2,
     label: 'Chatbot design',
     color: colors['panel-yellow'],
+    expandedLabelColor: 'rgba(100, 78, 18, 0.4)',
     client: 'Travel AI',
     year: '2024',
     title: 'Conversational UI for an AI travel planner',
@@ -147,6 +150,7 @@ const panels = [
     id: 3,
     label: 'Mobile-first design',
     color: colors['panel-green'],
+    expandedLabelColor: 'rgba(82, 84, 18, 0.4)',
     client: 'Royal Australasian College of Surgeons (RACS)',
     year: '2020',
     title: 'Simplifying professional development activity logging and tracking for surgeons at RACS',
@@ -308,6 +312,48 @@ function PanelLabel({ text, color }) {
 }
 
 // =============================================================
+// EXPANDED PANEL LABEL — bottom-right watermark, same bottom
+// alignment as collapsed labels via ResizeObserver
+// =============================================================
+
+function ExpandedPanelLabel({ text, color }) {
+  const spanRef = useRef(null)
+  const [top, setTop] = useState(null)
+  const isDesktop = useIsDesktop()
+
+  useEffect(() => {
+    const span = spanRef.current
+    if (!span || !span.parentElement || !isDesktop) {
+      setTop(null)
+      return
+    }
+
+    const PADDING = 16
+
+    const measure = () => {
+      const W      = span.offsetWidth
+      const panelH = span.parentElement.offsetHeight
+      setTop(Math.max(0, panelH - PADDING - W / 2))
+    }
+
+    const ro = new ResizeObserver(measure)
+    ro.observe(span.parentElement)
+    measure()
+    return () => ro.disconnect()
+  }, [text, isDesktop])
+
+  return (
+    <span
+      ref={spanRef}
+      className="expanded-label panel-label"
+      style={{ color, ...(top !== null && { top: `${top}px` }) }}
+    >
+      {text}
+    </span>
+  )
+}
+
+// =============================================================
 // ACCORDION
 // =============================================================
 
@@ -442,6 +488,9 @@ function Accordion() {
               </div>
             </div>
 
+            {/* ── Expanded label — bottom-right watermark (outside clip) ── */}
+            <ExpandedPanelLabel text={panel.label} color={panel.expandedLabelColor} />
+
             {/* ── Rotated label (outside clip, bottom-aligned) ────── */}
             <PanelLabel text={panel.label} color={tok.text} />
 
@@ -473,7 +522,7 @@ function Hero() {
       {/* Row 1 col 1 — hero line 1 */}
       <p
         className="hero-line-1 hero-text-block"
-        style={{ gridColumn: 1, gridRow: 1, marginTop: 'var(--space-5)' }}
+        style={{ gridColumn: 1, gridRow: 1 }}
         onMouseEnter={() => { if (isDesktop) setIsHovered(1) }}
         onMouseLeave={() => { if (isDesktop) setIsHovered(false) }}
       >
@@ -484,7 +533,7 @@ function Hero() {
       <div
         className={annotation1Class}
         style={{
-          gridColumn: 2, gridRow: 1, alignSelf: 'end', maxWidth: '440px',
+          gridColumn: 2, gridRow: 1, maxWidth: '440px',
           display: 'flex', gap: 'var(--space-4)',
         }}
       >
