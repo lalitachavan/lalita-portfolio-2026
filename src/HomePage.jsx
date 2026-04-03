@@ -269,28 +269,27 @@ function PanelImage({ imageSrc, color }) {
 }
 
 // =============================================================
-// PANEL LABEL — measures its own width to bottom-align all labels
+// PANEL LABEL — single element that slides from center (collapsed)
+// to right edge (expanded) while transitioning color
+// =============================================================
+
+// =============================================================
+// PANEL LABEL — collapsed center label
 // =============================================================
 
 function PanelLabel({ text, color }) {
-  const spanRef  = useRef(null)
+  const spanRef = useRef(null)
   const [top, setTop] = useState(null)
   const isDesktop = useIsDesktop()
 
   useEffect(() => {
     const span = spanRef.current
-    if (!span || !span.parentElement || !isDesktop) {
-      setTop(null)
-      return
-    }
+    if (!span || !span.parentElement || !isDesktop) { setTop(null); return }
 
-    const PADDING = 16 // px gap between label visual bottom and panel bottom edge
-
+    const PADDING = 16
     const measure = () => {
-      const W      = span.offsetWidth               // pre-rotation text width
+      const W = span.offsetWidth
       const panelH = span.parentElement.offsetHeight
-      // transform: translateY(-50%) means CSS `top` = visual center y.
-      // visual_bottom = top + W/2 → top = panelH - PADDING - W/2
       setTop(Math.max(0, panelH - PADDING - W / 2))
     }
 
@@ -303,7 +302,7 @@ function PanelLabel({ text, color }) {
   return (
     <span
       ref={spanRef}
-      className="panel-label-rotated panel-label"
+      className="panel-label-collapsed panel-label"
       style={{ color, ...(top !== null && { top: `${top}px` }) }}
     >
       {text}
@@ -312,8 +311,7 @@ function PanelLabel({ text, color }) {
 }
 
 // =============================================================
-// EXPANDED PANEL LABEL — bottom-right watermark, same bottom
-// alignment as collapsed labels via ResizeObserver
+// EXPANDED PANEL LABEL — bottom-right watermark
 // =============================================================
 
 function ExpandedPanelLabel({ text, color }) {
@@ -323,15 +321,11 @@ function ExpandedPanelLabel({ text, color }) {
 
   useEffect(() => {
     const span = spanRef.current
-    if (!span || !span.parentElement || !isDesktop) {
-      setTop(null)
-      return
-    }
+    if (!span || !span.parentElement || !isDesktop) { setTop(null); return }
 
     const PADDING = 16
-
     const measure = () => {
-      const W      = span.offsetWidth
+      const W = span.offsetWidth
       const panelH = span.parentElement.offsetHeight
       setTop(Math.max(0, panelH - PADDING - W / 2))
     }
@@ -345,7 +339,7 @@ function ExpandedPanelLabel({ text, color }) {
   return (
     <span
       ref={spanRef}
-      className="expanded-label panel-label"
+      className="panel-label-expanded panel-label"
       style={{ color, ...(top !== null && { top: `${top}px` }) }}
     >
       {text}
@@ -359,18 +353,26 @@ function ExpandedPanelLabel({ text, color }) {
 
 function Accordion() {
   const [activePanel, setActivePanel] = useState(panels.length - 1)
+  const prevPanelRef = useRef(panels.length - 1)
+  const [direction, setDirection] = useState('left')
   const tabRefs = useRef([])
+
+  function selectPanel(nextId) {
+    setDirection(nextId > prevPanelRef.current ? 'right' : 'left')
+    prevPanelRef.current = nextId
+    setActivePanel(nextId)
+  }
 
   function handleKeyDown(e, index) {
     let next = null
 
     if      (e.key === 'ArrowRight')             next = (index + 1) % panels.length
     else if (e.key === 'ArrowLeft')              next = (index - 1 + panels.length) % panels.length
-    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActivePanel(index); return }
+    else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectPanel(index); return }
     else return
 
     e.preventDefault()
-    setActivePanel(next)
+    selectPanel(next)
     tabRefs.current[next]?.focus()
   }
 
@@ -378,7 +380,7 @@ function Accordion() {
     <div
       role="tablist"
       aria-label="Portfolio projects"
-      className="accordion"
+      className={`accordion dir-${direction}`}
     >
       {panels.map((panel, index) => {
         const isExpanded = activePanel === panel.id
@@ -399,7 +401,7 @@ function Accordion() {
             ref={el => { tabRefs.current[index] = el }}
             className={`accordion-panel focus-dark ${isExpanded ? 'is-expanded' : ''}`}
             style={{ backgroundColor: panel.color, borderRadius: clipRadius, zIndex: index + 1 }}
-            onClick={() => setActivePanel(panel.id)}
+            onClick={() => selectPanel(panel.id)}
             onKeyDown={(e) => handleKeyDown(e, index)}
           >
 
@@ -488,11 +490,11 @@ function Accordion() {
               </div>
             </div>
 
-            {/* ── Expanded label — bottom-right watermark (outside clip) ── */}
-            <ExpandedPanelLabel text={panel.label} color={panel.expandedLabelColor} />
-
-            {/* ── Rotated label (outside clip, bottom-aligned) ────── */}
+            {/* ── Collapsed label — fades out on expand ── */}
             <PanelLabel text={panel.label} color={tok.text} />
+
+            {/* ── Expanded watermark — fades in on expand ── */}
+            <ExpandedPanelLabel text={panel.label} color={panel.expandedLabelColor} />
 
 
           </div>

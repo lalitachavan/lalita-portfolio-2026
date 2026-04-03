@@ -68,10 +68,15 @@ All four files complete:
 - Keyboard: Arrow Left/Right navigates, Enter/Space expands
 - ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`
 - Collapsed panel hover: `translateX(-16px)` slides panel left to reveal label (no width change — no layout shift)
+- Collapsed panel press: `:active` scale(0.98) + 80ms — tactile press feedback
+- Panel expand: image column slides in from navigation direction via `@keyframes` (`dir-left`/`dir-right` class on accordion)
+- Content stagger on expand: each child slides up 10px + fades in with 60ms stagger, starting at 250ms delay
+- Panels have `box-shadow: -4px 0 12px rgba(0,0,0,0.15)` — left-facing shadow for depth
 - Mascot removed (will be re-added later)
-- `ExpandedPanelLabel` — rotated watermark on bottom-right of expanded panel, same JS `ResizeObserver` bottom-alignment as collapsed labels (16px padding), pinned to `right: 16px`
+- Two separate label elements per panel: `PanelLabel` (collapsed, centered) and `ExpandedPanelLabel` (expanded watermark, right edge)
+- Collapsed label: instant show/hide, no transition
+- Expanded watermark: `right: calc(var(--accordion-collapsed-w) - 32px)` — offset to stay visible when panels overlap, hidden on mobile
 - Per-panel `expandedLabelColor` — hue-matched muted tones at 40% opacity (e.g. green: `rgba(82, 84, 18, 0.4)`)
-- Fades in with panel content (300ms, 250ms delay), hidden on mobile
 
 **Expanded panel content:**
 - Client + year: Lora medium italic (500), clamp(13–20px), `--tracking-tight`, dot separator
@@ -150,6 +155,12 @@ All four files complete:
 | Cursor hide style via useEffect cleanup | Reversible — no permanently leaked global `cursor: none` |
 | Expanded panel watermark label | Same ResizeObserver bottom-alignment as collapsed labels, pinned right |
 | Per-panel `expandedLabelColor` at 40% opacity | Hue-matched to panel color, acts as subtle watermark without competing with content |
+| Panel press: `:active` scale(0.98) | 80ms snap gives tactile press feedback on collapsed panels |
+| Direction-aware image slide via `@keyframes` | `dir-left`/`dir-right` class on accordion — keyframes always start from correct position, avoiding stale transition values when jumping non-adjacent panels |
+| Content stagger on expand | Each child slides up 10px + fades in, 60ms apart starting at 250ms delay |
+| Image column slides in from navigation direction | Reinforces spatial model; slides from left or right depending on which panel was clicked |
+| Panel `box-shadow: -4px 0 12px` | Left-facing shadow gives depth between overlapping cards |
+| Expanded label offset `right: calc(collapsed-w - 32px)` | Keeps watermark visible regardless of how many panels overlap on the right |
 
 ---
 

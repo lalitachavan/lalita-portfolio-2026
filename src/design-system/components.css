@@ -314,6 +314,7 @@
   width: var(--accordion-collapsed-w);
   height: 100%;
   margin-left: calc(var(--accordion-radius) * -1);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
   /* No overflow:hidden — content clipped by .panel-clip inside */
 }
 
@@ -334,6 +335,12 @@
 
   .accordion-panel:hover:not(.is-expanded) {
     transform: translateX(calc(var(--accordion-radius) * -1));
+  }
+
+  .accordion-panel:active:not(.is-expanded) {
+    transform: translateX(calc(var(--accordion-radius) * -1)) scale(0.98);
+    transition: width var(--duration-accordion) var(--easing-accordion),
+                transform 80ms ease-out;
   }
 }
 
@@ -370,9 +377,9 @@
   gap: var(--space-3);
 }
 
-/* ── Content fade — opacity only, no position styles ── */
+/* ── Content reveal — staggered children slide up + fade in ── */
 .accordion-panel-content {
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
 }
 
@@ -380,32 +387,83 @@
   pointer-events: auto;
 }
 
+/* Each direct child starts hidden */
+.accordion-panel-content > * {
+  opacity: 0;
+}
+
+.accordion-panel.is-expanded .accordion-panel-content > * {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .accordion-panel.is-expanded .accordion-panel-content {
-    opacity: 1;
-    transition: opacity 300ms ease-out 250ms;
+  /* Slide up + fade in on expand, per child */
+  .accordion-panel-content > * {
+    transform: translateY(10px);
+    transition: opacity 150ms ease-out, transform 150ms ease-out;
   }
 
-  .accordion-panel:not(.is-expanded) .accordion-panel-content {
+  .accordion-panel.is-expanded .accordion-panel-content > * {
+    transform: translateY(0);
+    transition: opacity 350ms ease-out var(--stagger-delay, 250ms),
+                transform 350ms cubic-bezier(0.22, 1, 0.36, 1) var(--stagger-delay, 250ms);
+  }
+
+  /* Stagger delays — base 250ms (waits for width transition) + 50ms per child */
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(1) { --stagger-delay: 250ms; }
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(2) { --stagger-delay: 310ms; }
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(3) { --stagger-delay: 370ms; }
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(4) { --stagger-delay: 430ms; }
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(5) { --stagger-delay: 490ms; }
+  .accordion-panel.is-expanded .accordion-panel-content > :nth-child(6) { --stagger-delay: 550ms; }
+
+  /* Image column — hidden when collapsed, exits fast */
+  .panel-image-col {
     opacity: 0;
+    transform: translateX(0);
     transition: opacity 150ms ease-out;
+  }
+
+  /* Expand: keyframe animation so direction is always correct
+     (transitions animate from stale computed values; keyframes don't) */
+  .accordion.dir-left .accordion-panel.is-expanded .panel-image-col {
+    animation: image-slide-left 500ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+  }
+
+  .accordion.dir-right .accordion-panel.is-expanded .panel-image-col {
+    animation: image-slide-right 500ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
+  }
+
+  @keyframes image-slide-left {
+    from { opacity: 0; transform: translateX(-20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes image-slide-right {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .accordion-panel.is-expanded .accordion-panel-content {
+  .accordion-panel.is-expanded .accordion-panel-content > * {
     opacity: 1;
+  }
+  .accordion-panel.is-expanded .panel-image-col {
+    opacity: 1;
+    transform: none;
   }
 }
 
 /* =============================================================
-   PANEL LABEL — rotated collapsed state
-   Outside .panel-clip. top is set by JS to bottom-align all
-   labels at the same position. CSS default (50%) is the
-   fallback before JS measures.
+   PANEL LABEL — unified collapsed/expanded
+   Slides from center (collapsed) to right edge (expanded).
+   `left` transitions between 50% and calc(100% - 16px).
+   Color transitions from panel text to muted watermark.
    ============================================================= */
 
-.panel-label-rotated {
+.panel-label-collapsed,
+.panel-label-expanded {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -415,58 +473,24 @@
   z-index: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .panel-label-rotated {
-    transition: opacity 200ms ease-out;
-  }
-}
-
-.accordion-panel.is-expanded .panel-label-rotated {
+/* Collapsed label: visible by default, fades out when panel expands */
+.accordion-panel.is-expanded .panel-label-collapsed {
   opacity: 0;
 }
 
-/* =============================================================
-   EXPANDED LABEL — bottom-right watermark inside .panel-clip
-   Only visible when the panel is expanded.
-   ============================================================= */
-
-.expanded-label {
-  position: absolute;
-  top: 50%;
-  right: 16px;
+/* Expanded watermark: hidden by default, fades in when panel expands.
+   Offset from right by collapsed-w to clear the overlapping panel. */
+.panel-label-expanded {
   left: auto;
+  right: calc(var(--accordion-collapsed-w) - 32px);
   transform: translateX(50%) translateY(-50%) rotate(-90deg);
-  white-space: nowrap;
-  pointer-events: none;
-  z-index: 1;
   opacity: 0;
 }
 
-.accordion-panel.is-expanded .expanded-label {
+.accordion-panel.is-expanded .panel-label-expanded {
   opacity: 1;
 }
 
-/* Hide the collapsed label when expanded (already handled),
-   and hide the expanded label when collapsed */
-.accordion-panel:not(.is-expanded) .expanded-label {
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .expanded-label {
-    transition: opacity 300ms ease-out 250ms;
-  }
-
-  .accordion-panel:not(.is-expanded) .expanded-label {
-    transition: opacity 150ms ease-out;
-  }
-}
-
-@media (max-width: 767px) {
-  .expanded-label {
-    display: none;
-  }
-}
 
 /* =============================================================
    NAVIGATION DOTS
@@ -595,6 +619,13 @@
   .panel-image-col {
     width: 100%;
     height: 200px;
+    opacity: 1;
+    transform: none;
+  }
+
+  .accordion-panel-content > * {
+    opacity: 1;
+    transform: none;
   }
 
   .panel-content-col {
@@ -617,15 +648,14 @@
   }
 
   /* Mobile collapsed label: horizontal, left-aligned, not rotated */
-  .panel-label-rotated {
+  .panel-label-collapsed {
     transform: none;
     left: var(--accordion-padding);
-    bottom: auto;
     top: 50%;
     translate: 0 -50%;
   }
 
-  .accordion-panel.is-expanded .panel-label-rotated {
+  .panel-label-expanded {
     display: none;
   }
 }
