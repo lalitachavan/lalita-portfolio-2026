@@ -31,7 +31,7 @@ export default function CaseStudyPage() {
 
   useEffect(() => {
     // Delay matches overlay fade-out (100ms nav + 300ms fade = ~400ms)
-    const t = setTimeout(() => setRevealed(true), 420)
+    const t = setTimeout(() => setRevealed(true), 200)
     return () => clearTimeout(t)
   }, [])
 
