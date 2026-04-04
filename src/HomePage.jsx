@@ -1,167 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
-import { colors, getPanelTokens, isLightPanel } from './design-system/tokens.js'
+import { getPanelTokens, isLightPanel } from './design-system/tokens.js'
+import { projects } from './data/projects.js'
+import { usePageTransition } from './PageTransition'
 
 
 const DESKTOP_BREAKPOINT = '(min-width: 768px)'
 
-// =============================================================
-// NAV
-// =============================================================
-
-const navLinks = [
-  { label: 'Home',     href: '/',        active: true  },
-  { label: 'Projects', href: '/work',    active: false },
-  { label: 'About',    href: '/about',   active: false },
-  { label: 'Contact',  href: '/contact', active: false },
-  { label: 'Resume',   href: '/resume',  active: false },
-  { label: 'LinkedIN', href: 'https://linkedin.com/in/lalitachavan', active: false },
-]
-
-function Nav({ isHome = false }) {
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  return (
-    <nav aria-label="Main navigation" className="nav-bar">
-      {/* Wordmark */}
-      <a href="/" className="nav-wordmark focus-light" aria-current={isHome ? 'page' : undefined}>
-        Lalita Chavan
-      </a>
-
-      {/* Desktop links */}
-      <ul className="nav-links">
-        {navLinks.map(({ label, href, active }) => (
-          <li key={label}>
-            <a
-              href={href}
-              className="nav-link focus-light"
-              aria-current={active ? 'page' : undefined}
-              style={{
-                padding: 'var(--space-2) var(--space-4)',
-                borderRadius: 'var(--radius-md)',
-                fontWeight: active ? 'var(--weight-bold)' : 'var(--weight-regular)',
-                color: active ? 'var(--color-ink-primary)' : 'var(--color-ink-muted)',
-              }}
-            >
-              {label}
-            </a>
-          </li>
-        ))}
-      </ul>
-
-      {/* Hamburger button — mobile only */}
-      <button
-        className="nav-hamburger focus-light"
-        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        aria-expanded={menuOpen}
-        onClick={() => setMenuOpen((o) => !o)}
-      >
-        {menuOpen ? (
-          /* X icon */
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-            <line x1="4" y1="4" x2="16" y2="16" />
-            <line x1="16" y1="4" x2="4" y2="16" />
-          </svg>
-        ) : (
-          /* Hamburger icon */
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
-            <line x1="3" y1="5" x2="17" y2="5" />
-            <line x1="3" y1="10" x2="17" y2="10" />
-            <line x1="3" y1="15" x2="17" y2="15" />
-          </svg>
-        )}
-      </button>
-
-      {/* Mobile menu — shown when open */}
-      {menuOpen && (
-        <ul className="nav-mobile-menu">
-          {navLinks.map(({ label, href, active }) => (
-            <li key={label}>
-              <a
-                href={href}
-                className="nav-link focus-light"
-                aria-current={active ? 'page' : undefined}
-                style={{
-                  fontWeight: active ? 'var(--weight-bold)' : 'var(--weight-regular)',
-                  color: active ? 'var(--color-ink-primary)' : 'var(--color-ink-muted)',
-                }}
-                onClick={() => setMenuOpen(false)}
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
-    </nav>
-  )
-}
 
 // =============================================================
 // PANEL DATA
 // =============================================================
 
-const panels = [
-  {
-    id: 0,
-    label: 'Design system',
-    color: colors['panel-orange'],
-    expandedLabelColor: 'rgba(100, 30, 10, 0.4)',
-    client: 'Royal Australasian College of Surgeons (RACS)',
-    year: '2023',
-    title: "Building the organization's first design system",
-    description:
-      'Typography, color tokens, components, and developer documentation built from scratch for a team of developers and stakeholders.',
-    role: 'Design Systems Designer',
-    tools: 'Figma, Storybook',
-    caseStudyUrl: '/work/design-system',
-    imageSrc: '/images/design-system-mockup.png',
-  },
-  {
-    id: 1,
-    label: 'Usability study',
-    color: colors['panel-magenta'],
-    expandedLabelColor: 'rgba(80, 15, 45, 0.4)',
-    client: 'Airpals',
-    year: '2022',
-    title: 'Usability testing for a logistics startup',
-    description:
-      'End-to-end usability research surfacing key friction points and delivering actionable design recommendations.',
-    role: 'UX Researcher',
-    tools: 'Maze, Figma',
-    caseStudyUrl: '/work/airpals',
-    imageSrc: '/images/airpals-mockup.png',
-  },
-  {
-    id: 2,
-    label: 'Chatbot design',
-    color: colors['panel-yellow'],
-    expandedLabelColor: 'rgba(100, 78, 18, 0.4)',
-    client: 'Travel AI',
-    year: '2024',
-    title: 'Conversational UI for an AI travel planner',
-    description:
-      'Designed intent mapping, response formatting, and error states for an AI-powered travel assistant.',
-    role: 'Product Designer',
-    tools: 'Figma, ChatGPT',
-    caseStudyUrl: '/work/travel-ai',
-    imageSrc: '/images/chatbot-mockup.png',
-  },
-  {
-    id: 3,
-    label: 'Mobile-first design',
-    color: colors['panel-green'],
-    expandedLabelColor: 'rgba(82, 84, 18, 0.4)',
-    client: 'Royal Australasian College of Surgeons (RACS)',
-    year: '2020',
-    title: 'Simplifying professional development activity logging and tracking for surgeons at RACS',
-    description:
-      'Reducing cognitive load for surgeons by simplifying navigation, surfacing unfinished tasks on the home screen, and creating a one-click path to key actions.',
-    role: '0 > 1 UI/UX Designer, UX Researcher, Business Analyst',
-    tools: 'Adobe XD, Adobe Illustrator',
-    caseStudyUrl: '/work/racs',
-    imageSrc: '/images/racs-mockup.png',
-  },
-]
+// Panel data sourced from shared projects — accordion references `panels` throughout
+const panels = projects
 
 // =============================================================
 // HELPERS
@@ -288,13 +139,16 @@ function PanelLabel({ text, color }) {
 
     const PADDING = 16
     const measure = () => {
-      const W = span.offsetWidth
-      const panelH = span.parentElement.offsetHeight
-      setTop(Math.max(0, panelH - PADDING - W / 2))
+      requestAnimationFrame(() => {
+        const W = span.offsetWidth
+        const panelH = span.parentElement.offsetHeight
+        setTop(Math.max(0, panelH - PADDING - W / 2))
+      })
     }
 
     const ro = new ResizeObserver(measure)
     ro.observe(span.parentElement)
+    ro.observe(span)
     measure()
     return () => ro.disconnect()
   }, [text, isDesktop])
@@ -325,13 +179,16 @@ function ExpandedPanelLabel({ text, color }) {
 
     const PADDING = 16
     const measure = () => {
-      const W = span.offsetWidth
-      const panelH = span.parentElement.offsetHeight
-      setTop(Math.max(0, panelH - PADDING - W / 2))
+      requestAnimationFrame(() => {
+        const W = span.offsetWidth
+        const panelH = span.parentElement.offsetHeight
+        setTop(Math.max(0, panelH - PADDING - W / 2))
+      })
     }
 
     const ro = new ResizeObserver(measure)
     ro.observe(span.parentElement)
+    ro.observe(span)
     measure()
     return () => ro.disconnect()
   }, [text, isDesktop])
@@ -352,12 +209,15 @@ function ExpandedPanelLabel({ text, color }) {
 // =============================================================
 
 function Accordion() {
+  const { expandToPage } = usePageTransition()
   const [activePanel, setActivePanel] = useState(panels.length - 1)
   const prevPanelRef = useRef(panels.length - 1)
   const [direction, setDirection] = useState('left')
+  const [hasInteracted, setHasInteracted] = useState(false)
   const tabRefs = useRef([])
 
   function selectPanel(nextId) {
+    setHasInteracted(true)
     setDirection(nextId > prevPanelRef.current ? 'right' : 'left')
     prevPanelRef.current = nextId
     setActivePanel(nextId)
@@ -380,15 +240,12 @@ function Accordion() {
     <div
       role="tablist"
       aria-label="Portfolio projects"
-      className={`accordion dir-${direction}`}
+      className={`accordion${hasInteracted ? ` dir-${direction}` : ''}`}
     >
       {panels.map((panel, index) => {
         const isExpanded = activePanel === panel.id
         const tok        = getPanelTokens(panel.color)
-
-        const clipRadius = isExpanded
-          ? 'var(--accordion-radius)'
-          : 'var(--accordion-radius) 0 0 var(--accordion-radius)'
+        const clipRadius = 'var(--accordion-radius)'
 
         return (
           <div
@@ -464,8 +321,7 @@ function Accordion() {
                   </p>
 
                   {/* View case study — cream pill */}
-                  <a
-                    href={panel.caseStudyUrl}
+                  <button
                     className="pill focus-dark"
                     style={{
                       fontFamily: 'var(--font-serif)',
@@ -480,10 +336,14 @@ function Accordion() {
                       marginTop: 'var(--space-1)',
                       alignSelf: 'flex-start',
                     }}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const panelEl = e.currentTarget.closest('.accordion-panel')
+                      expandToPage(panelEl, panel.color, panel.caseStudyUrl)
+                    }}
                   >
                     View full case study
-                  </a>
+                  </button>
 
                 </div>
 
@@ -697,13 +557,16 @@ function Dot({ color = 'var(--color-ink-muted)' }) {
 }
 
 // =============================================================
+// EXIT CONTROLS — dev panel for choreographing the transition
+// =============================================================
+
+// =============================================================
 // PAGE
 // =============================================================
 
 export default function HomePage() {
   return (
     <main className="page-layout">
-      <Nav isHome />
       <Hero />
       <div className="accordion-wrapper">
         <Accordion />

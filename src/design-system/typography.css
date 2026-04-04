@@ -74,10 +74,17 @@ p {
 .hero-line-1 {
   font-family: var(--font-sans);
   font-size: var(--size-hero-line1);
-  font-weight: var(--weight-semibold);
+  font-weight: var(--weight-regular);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-hero);
   color: var(--color-ink-primary);
+  padding-top: var(--space-6);
+}
+
+@media (max-width: 1199px) {
+  .hero-line-1 {
+    letter-spacing: -1px;
+  }
 }
 
 .hero-line-2 {
@@ -87,6 +94,7 @@ p {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-ink-tertiary);
+  padding-bottom: var(--space-2);
 }
 
 /* =============================================================

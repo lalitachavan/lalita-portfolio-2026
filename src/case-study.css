@@ -1,0 +1,421 @@
+/* =============================================================
+   CASE STUDY PAGE
+   Hero: panel color background. Body: white.
+   Headings: Lora. Body: Geist.
+   ============================================================= */
+
+/* ── Page shell ── */
+.cs-page {
+  min-height: 100dvh;
+  background: #FFFFFF;
+}
+
+.cs-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  gap: var(--space-4);
+  font-family: var(--font-sans);
+  color: var(--color-ink-secondary);
+}
+
+/* ── Hero ── */
+.cs-hero {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  padding: calc(var(--nav-height) + var(--page-padding-top)) var(--page-padding-x) var(--space-12);
+}
+
+.cs-hero-inner {
+  width: 100%;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.cs-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: var(--size-nav);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wide);
+  padding: var(--space-2) 0;
+  margin-bottom: var(--space-8);
+}
+
+.cs-hero-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+/* ── Hero entrance — mirrors accordion panel content stagger ── */
+.cs-hero-image,
+.cs-hero-text > * {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cs-hero-image,
+  .cs-hero-text > * {
+    transition: opacity 350ms ease-out, transform 350ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--cs-stagger, 0ms);
+  }
+
+  .cs-hero-revealed .cs-hero-image {
+    opacity: 1;
+    transform: translateY(0);
+    --cs-stagger: 0ms;
+  }
+
+  .cs-hero-revealed .cs-hero-text > :nth-child(1) { --cs-stagger: 60ms;  }
+  .cs-hero-revealed .cs-hero-text > :nth-child(2) { --cs-stagger: 120ms; }
+  .cs-hero-revealed .cs-hero-text > :nth-child(3) { --cs-stagger: 180ms; }
+  .cs-hero-revealed .cs-hero-text > :nth-child(4) { --cs-stagger: 240ms; }
+
+  .cs-hero-revealed .cs-hero-text > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-hero-image,
+  .cs-hero-text > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cs-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.cs-hero-client {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--size-panel-client);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+.cs-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+.cs-hero-hook {
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.4vw, 20px);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+.cs-hero-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 1px solid;
+  margin-top: var(--space-3);
+}
+
+.cs-hero-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.cs-meta-label {
+  font-family: var(--font-sans);
+  font-size: var(--size-label);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+}
+
+.cs-meta-value {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+}
+
+.cs-hero-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-hero-image img {
+  max-width: 100%;
+  max-height: 70vh;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ── Body ── */
+.cs-body {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-16) var(--page-padding-x) var(--space-12);
+}
+
+/* ── Section spacing ── */
+.cs-section {
+  margin-bottom: var(--space-16);
+}
+
+/* ── Headings — Lora ── */
+.cs-heading {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 2.5vw, 32px);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-ink-primary);
+  margin: 0 0 var(--space-6);
+}
+
+/* ── Body text — Geist ── */
+.cs-body-text {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  margin: 0 0 var(--space-4);
+}
+
+.cs-body-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Impact stats ── */
+.cs-impact {
+  padding: var(--space-10) 0;
+  border-bottom: 1px solid var(--border-color-default);
+}
+
+.cs-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+  text-align: center;
+}
+
+.cs-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cs-stat-value {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  color: var(--color-ink-primary);
+}
+
+.cs-stat-label {
+  font-family: var(--font-sans);
+  font-size: var(--size-caption);
+  color: var(--color-ink-tertiary);
+  line-height: var(--leading-normal);
+}
+
+/* ── Callout / blockquote ── */
+.cs-callout {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(16px, 1.5vw, 20px);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-primary);
+  border-left: 3px solid;
+  padding-left: var(--space-6);
+  margin: 0 0 var(--space-6);
+}
+
+/* ── HMW statement ── */
+.cs-hmw {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-bold);
+  margin: 0 0 var(--space-6);
+}
+
+/* ── Principle callout ── */
+.cs-principle {
+  font-style: italic;
+  color: var(--color-ink-tertiary);
+}
+
+/* ── Lists ── */
+.cs-list,
+.cs-ordered-list {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  padding-left: var(--space-6);
+  margin: 0 0 var(--space-4);
+}
+
+.cs-list li,
+.cs-ordered-list li {
+  margin-bottom: var(--space-2);
+}
+
+/* ── Research methods cards ── */
+.cs-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.cs-method-card {
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--color-cream-base);
+}
+
+.cs-method-icon {
+  font-size: 24px;
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.cs-method-name {
+  font-family: var(--font-serif);
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink-primary);
+  margin: 0 0 var(--space-3);
+}
+
+.cs-method-detail {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-normal);
+  color: var(--color-ink-primary);
+  font-weight: var(--weight-semibold);
+  margin: 0 0 var(--space-3);
+}
+
+.cs-method-why {
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-ink-secondary);
+  margin: 0;
+}
+
+/* ── Design decisions ── */
+.cs-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.cs-decision-title {
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  color: var(--color-ink-primary);
+  margin: 0 0 var(--space-4);
+}
+
+.cs-decision-number {
+  font-weight: var(--weight-bold);
+}
+
+/* ── Learnings / Reflection ── */
+.cs-learnings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.cs-learning {
+  padding-left: var(--space-6);
+  border-left: 2px solid var(--border-color-default);
+}
+
+/* ── Footer nav ── */
+.cs-footer-nav {
+  padding: var(--space-10) 0;
+  border-top: 1px solid var(--border-color-default);
+  margin-top: var(--space-8);
+}
+
+.cs-back-bottom {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: var(--size-body);
+  color: var(--color-ink-secondary);
+  padding: var(--space-2) 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cs-back,
+  .cs-back-bottom {
+    transition: opacity 200ms ease-out;
+  }
+
+  .cs-back:hover,
+  .cs-back-bottom:hover {
+    opacity: 0.7;
+  }
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .cs-hero {
+    min-height: auto;
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  .cs-hero-content {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .cs-hero-image {
+    order: -1;
+  }
+
+  .cs-impact-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .cs-methods-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cs-body {
+    padding-top: var(--space-10);
+  }
+}

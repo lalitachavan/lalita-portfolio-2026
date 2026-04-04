@@ -1,7 +1,11 @@
 import { StrictMode, useRef, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import HomePage from './HomePage'
+import CaseStudyPage from './CaseStudyPage'
+import Layout from './Layout'
+import { PageTransitionProvider } from './PageTransition'
 
 const INTERACTIVE = 'a, button, [role="tab"], [role="button"], .hero-line-1, .hero-line-2'
 
@@ -106,7 +110,16 @@ function CursorDot() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CursorDot />
-    <HomePage />
+    <BrowserRouter>
+      <PageTransitionProvider>
+        <CursorDot />
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/work/:slug" element={<CaseStudyPage />} />
+          </Routes>
+        </Layout>
+      </PageTransitionProvider>
+    </BrowserRouter>
   </StrictMode>
 )

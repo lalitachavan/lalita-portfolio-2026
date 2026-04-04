@@ -79,9 +79,9 @@
      TYPOGRAPHY — Font sizes
      ----------------------------------------------------------- */
 
-  --size-hero-line1:   clamp(32px, 4vw, 52px);
-  --size-hero-line2:   clamp(28px, 3.8vw, 46px);
-  --size-annotation:   clamp(15px, 1.3vw, 18px);
+  --size-hero-line1:   clamp(24px, 3vw, 36px);
+  --size-hero-line2:   clamp(20px, 2.6vw, 30px);
+  --size-annotation:   clamp(14px, 1.2vw, 16px);
   --size-nav:          clamp(12px, 1vw, 14px);
   --size-wordmark:     clamp(14px, 1.2vw, 18px);
   --size-panel-label:  clamp(20px, 2.5vw, 36px);
@@ -147,6 +147,7 @@
   /* Page layout */
   --page-padding-x:   clamp(24px, 5vw, 80px);
   --page-padding-top: clamp(12px, 2vw, 24px);
+  --nav-height:       64px; /* approx fixed nav height — used to offset page content */
   --hero-gap:         clamp(24px, 3vw, 48px);
 
   /* Hero internals */
@@ -155,7 +156,7 @@
   --hero-column-gap:    clamp(40px, 5vw, 80px);
 
   /* Accordion */
-  --accordion-height:             340px;
+  --accordion-height:             280px;
   --accordion-collapsed-w:        80px;
   --accordion-hover-w:            72px;
   --accordion-radius:             16px;

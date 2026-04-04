@@ -9,106 +9,84 @@ Update it at the end of every session.
 
 ### Design system (`src/design-system/`)
 
-All four files complete:
+- **`tokens.css`** — CSS custom properties on `:root`. Covers colors, typography, spacing, border radius, borders, animation durations/easings, layout, mascot, dots. Includes `--nav-height: 64px` for fixed nav offset.
+- **`tokens.js`** — JS exports matching `tokens.css`. Exports `colors`, `typography`, `spacing`, `borderRadius`, `borders`, `animation`, `components`, `layout`, `getPanelTokens(color)`, `isLightPanel(color)`.
+- **`typography.css`** — Single Google Fonts `@import` for Geist (400/600/700) + Lora (400/400i/500i/700). Base reset, all type classes. Hero line 1: Geist regular, `padding-top: var(--space-6)`. Hero line 2: Lora regular, `padding-bottom: var(--space-2)`. Both have clamp font sizes. Letter-spacing on hero line 1 drops to -1px below 1200px viewport.
+- **`components.css`** — Page layout, nav, hero grid layout, annotation clip-path wipe, accordion (desktop + mobile), panel label rotation, pill button, panel exit choreography CSS.
 
-- **`tokens.css`** — CSS custom properties on `:root`. Covers colors, typography, spacing, border radius, borders, animation durations/easings, layout, mascot, dots.
-- **`tokens.js`** — JS exports matching `tokens.css` exactly. Named exports: `colors`, `typography`, `spacing`, `borderRadius`, `borders`, `animation`, `components`, `layout`. Also exports `getPanelTokens(color)` and `isLightPanel(color)` helpers.
-- **`typography.css`** — Single Google Fonts `@import` for Geist (400/600/700) + Lora (400/400i/500i/700). Base reset, all type classes.
-- **`components.css`** — Page layout, nav, hero grid layout, annotation clip-path wipe, accordion (desktop + mobile), panel label rotation, pill button.
+### Routing & Layout
 
-### Scaffold
-
-- `package.json` — React 18, Vite 5, Tailwind 3, autoprefixer, postcss
-- `vite.config.js`, `postcss.config.js`
-- `tailwind.config.js` — imports `tokens.js`, extends theme
-- `index.html` — preconnect hints only
-- `src/main.jsx`, `src/index.css`
+- `src/main.jsx` — App entry: `BrowserRouter > PageTransitionProvider > CursorDot > Layout > Routes`. Routes: `/` → `HomePage`, `/work/:slug` → `CaseStudyPage`.
+- `src/Layout.jsx` — Persistent nav across all routes. Uses `react-router-dom` `Link`. LinkedIn is external. Active state derived from `useLocation()`.
+- `src/PageTransition.jsx` — Single WAAPI animation (Web Animations API) for panel-to-page transition. No React state — creates a DOM element directly, animates in one pass: horizontal fill (spring easing, 500ms) → vertical fill (ease-in-out, 800ms). After finish: navigate, keep overlay for 100ms then fade out (300ms) before removing.
 
 ### `src/HomePage.jsx`
 
-**Nav**
-- Wordmark: Geist semibold, clamp(14–18px), `--tracking-tight` (-1px), `--color-ink-muted`
-- `isHome` prop on `Nav` — sets `aria-current="page"` on wordmark when on homepage
-- Links: Geist 14px in a white rounded-rectangle container (`--radius-md`)
-- Active link: bold + `ink-primary`, inactive: regular + `ink-muted`
-- Hover: `translateY(-1px)` on non-active links and wordmark (disabled on active/home via `aria-current`)
-- No background hover — cursor handles the interaction feedback
-- Mobile: hamburger menu — white dropdown, X icon when open
-
 **Hero**
-- CSS Grid layout: 2 columns (`auto 1fr`), 2 rows, `row-gap: var(--space-2)` (8px), `align-items: center`
-- Explicit `gridColumn`/`gridRow` on every element to prevent auto-placement issues
-- Line 1: Geist semibold, `--size-hero-line1` (clamp 32–52px), `-2px` tracking, `ink-primary`
-- Line 2: Lora regular, `--size-hero-line2` (clamp 28–46px), `-1px` tracking (`--tracking-tight`), `ink-tertiary`
-- Brush stroke removed
-- Annotation 1 (row 1, col 2): pull quote with green accent bar, triggered by hovering line 1, `alignSelf: end`, `maxWidth: 440px`
-- Annotation 2 (row 2, col 2): pull quote with green accent bar, triggered by hovering line 2, `maxWidth: 440px`
-- Both annotations: Lora italic, clamp(15–18px), `--leading-snug` (1.3), `-0.5px` tracking, `ink-secondary`, 3px `accent-brush` left bar
-- "3+ years" and "7,000+ surgeons" semibold upright in annotation 1; "Claude Code" semibold upright in annotation 2
-- Annotation reveal: `@keyframes annotation-wipe` — `clip-path: inset(0 100% 0 0)` → `inset(0 0% 0 0)` (400ms, accordion easing). Hide: opacity fade 150ms.
-- `useIsDesktop()` hook — `matchMedia('(min-width: 768px)')` prevents hover at narrow widths
-- Mobile: single column grid, annotations always visible, no animation
+- CSS Grid: 2 columns (`auto 1fr`), 2 rows, `row-gap: var(--space-2)`, `align-items: center`
+- Line 1: Geist regular, clamp(24–36px), `-2px` tracking (drops to -1px below 1200px), `padding-top: var(--space-6)`
+- Line 2: Lora regular, clamp(20–30px), `-1px` tracking, `padding-bottom: var(--space-2)`, `ink-tertiary`
+- Annotations: Lora italic, clamp(14–16px), `--leading-snug`, `ink-secondary`, 3px `accent-brush` left bar, `align-self: end` (bottom-aligned in their grid row)
+- Annotation reveal: `@keyframes annotation-wipe` clip-path wipe, 400ms. Mobile: always visible.
 
 **Accordion**
-- 4 panels (left to right): Design system (orange), Usability study (magenta), Chatbot design (yellow), Mobile-first design (green)
-- Default expanded: last panel (Mobile-first design, green)
-- Stacked card look: panels overlap via `margin-left: calc(var(--accordion-radius) * -1)`, `z-index: index + 1`, collapsed-w: 80px
-- Collapsed panels: left corners rounded only (`var(--accordion-radius) 0 0 var(--accordion-radius)`)
-- Expanded panel: all four corners rounded (`var(--accordion-radius)`)
-- `borderRadius` applied to both outer `.accordion-panel` div AND `.panel-clip` div
-- Panel labels: Geist semibold, clamp(20–36px), `-1px` tracking, bottom-aligned via JS `ResizeObserver`
-- Label inside `.panel-clip` — clipped naturally at panel bounds (matches Figma)
+- 4 panels: Design system (orange), Usability study (magenta), Chatbot design (yellow), Mobile-first design (green)
+- Default expanded: last panel (green)
+- Desktop max-height: 400px, pushed toward footer via `margin-top: auto`
+- Stacked card overlap: `margin-left: calc(--accordion-radius * -1)`, `z-index: index + 1`
+- All corners rounded on all panels (`var(--accordion-radius)`)
 - `overflow: hidden` on `.panel-clip` inside each panel
-- Image column: 25%, content column: 75%
-- Content right padding: `clamp(48px, 8vw, 140px)` — narrower text area
-- Image: `width: 100%; height: auto` — no side clipping
-- `PanelImage` uses `ResizeObserver` to center image when it fits, top-align when it overflows
-- Desktop (≥1024px): top-aligned for dramatic crop; below 1024px: centered when fits
-- `PanelLabel` component measures rendered text width via `ResizeObserver` to bottom-align all labels consistently
-- Keyboard: Arrow Left/Right navigates, Enter/Space expands
-- ARIA: `role="tablist"`, `role="tab"`, `role="tabpanel"`
-- Collapsed panel hover: `translateX(-16px)` slides panel left to reveal label (no width change — no layout shift)
-- Collapsed panel press: `:active` scale(0.98) + 80ms — tactile press feedback
-- Panel expand: image column slides in from navigation direction via `@keyframes` (`dir-left`/`dir-right` class on accordion)
-- Content stagger on expand: each child slides up 10px + fades in with 60ms stagger, starting at 250ms delay
-- Panels have `box-shadow: -4px 0 12px rgba(0,0,0,0.15)` — left-facing shadow for depth
-- Mascot removed (will be re-added later)
-- Two separate label elements per panel: `PanelLabel` (collapsed, centered) and `ExpandedPanelLabel` (expanded watermark, right edge)
-- Collapsed label: instant show/hide, no transition
-- Expanded watermark: `right: calc(var(--accordion-collapsed-w) - 32px)` — offset to stay visible when panels overlap, hidden on mobile
-- Per-panel `expandedLabelColor` — hue-matched muted tones at 40% opacity (e.g. green: `rgba(82, 84, 18, 0.4)`)
+- Image col: 25%, content col: 75%, content right padding: clamp(48–140px)
+- Collapsed panel hover: `translateY(-3px)` + deeper shadow + white bar at top
+- Collapsed panel press: `scale(0.98) translateY(-1px)`, 80ms snap
+- Direction-aware image slide: `@keyframes image-slide-left/right` via `dir-left`/`dir-right` class on accordion. Class only added after first interaction (`hasInteracted` state) — prevents slide animation on page load. On page load image shows at full opacity immediately.
+- Content stagger on expand: each child slides up 10px + fades, 60ms stagger, starts at 250ms delay
+- `box-shadow: -4px 0 12px rgba(0,0,0,0.15)` on panels — depth between cards
+- Two label components per panel: `PanelLabel` (collapsed, center) and `ExpandedPanelLabel` (expanded watermark, right edge). Both use `ResizeObserver` on parent + span for bottom-alignment, wrapped in `requestAnimationFrame` to catch clamp font-size changes on resize.
+- "View full case study" button calls `expandToPage(panelEl, color, url)` from `usePageTransition()`
 
-**Expanded panel content:**
-- Client + year: Lora medium italic (500), clamp(13–20px), `--tracking-tight`, dot separator
-- Title: Geist semibold, clamp(16–24px), `--tracking-tight`
-- Description: Geist regular, clamp(13–20px), `--tracking-snug` (-0.5px)
-- Role/Tools: same as description
-- CTA pill: Lora regular italic, clamp(13–20px), `--tracking-tight`, cream background, 44px min-height
-- Pill hover: `box-shadow` lift + `translateY(-1px)`
-
-**Custom cursor (`src/main.jsx`)**
-- 16px dark dot, `position: fixed`, `pointer-events: none`
-- Guarded behind `@media (pointer: fine)` — touch/stylus users keep system cursor
-- `hasFinePointer` state tracks `matchMedia` changes (e.g. docking a tablet)
-- Cursor hide style injected/removed via `useEffect` cleanup — no leaked global styles
-- Event delegation (`mouseover`/`mouseout` on `document`) instead of per-element listeners — survives React re-renders
-- Framer-style positioning: `translate(-50%, -50%) translate3d(x, y, 0)` — centering baked into transform, no margin changes
-- Follows mouse via `mousemove`, hides on `mouseleave`
-- Hover state on `a`, `button`, `[role="tab"]`, `[role="button"]`, `.hero-line-1`, `.hero-line-2`: grows to 40px, white with `mix-blend-mode: difference`
-- Expanded accordion panel (`is-expanded`) excluded from cursor growth
-- Returns `null` when no fine pointer — no DOM node rendered
-- CSS transition on width/height/background for smooth scale
+**Custom cursor**
+- 16px dark dot, `position: fixed`, `pointer-events: none`, `z-index: 9999`
+- Guarded by `(pointer: fine)`, event delegation on document
+- Hover state: grows to 40px, white, `mix-blend-mode: difference`
+- Expanded panel excluded from cursor grow
 
 **Footer**
-- Always pinned to bottom via `margin-top: auto` on `.page-footer`
-- Border bleeds full width via negative margins
-- Left: mail icon + email, `ink-primary`
-- Right: "2026 · Designed by Lalita · Built with Claude Code", `ink-secondary`
+- `margin-top: var(--space-6)`, full-bleed border, email + credits
 
 **Page layout**
-- Desktop (≥1024px): `height: 100dvh`, `overflow: hidden`, flex column — above the fold
-- Tablet (768–1023px): scrolling, tighter vertical rhythm, accordion pinned to bottom via `flex: 1` on wrapper
-- Below 768px: normal scrolling
+- Desktop (≥1024px): `height: 100dvh`, `overflow: hidden`, flex column
+- Tablet (768–1023px): scrolling, accordion pinned via `flex: 1`
+- Mobile (≤767px): normal scroll
+
+### `src/CaseStudyPage.jsx`
+
+- Looks up project by slug from shared data, content from `src/data/case-studies/racs.js`
+- Only RACS (`/work/racs`) has content — other slugs show "not found"
+- Hero: panel color background fills full viewport height including behind the nav (no padding-top offset beyond `--nav-height`). Image left, content right (matches accordion layout).
+- Hero content entrance: `cs-hero-revealed` class added at 420ms after mount (synced to overlay fade-out). Image and each text child stagger in via `translateY(12px)` + opacity, 60ms apart.
+- Body: white background, max-width 800px, sections: impact stats, context, key insight callout, HMW problem, design approach, research methods cards, design decisions, reflection, footer nav.
+- Uses `getPanelTokens()` for hero text colors.
+
+### `src/PageTransition.jsx`
+
+Single WAAPI animation — no React state, no phase switching:
+1. Overlay div created directly on `document.body`
+2. Starts at panel's bounding rect
+3. Animates: panel rect → full width same height (spring) → full viewport (ease-in-out), total 1300ms
+4. `onfinish`: navigate, wait 100ms, fade overlay out (300ms), remove element
+
+### Data layer
+
+- `src/data/projects.js` — `projects` array + `getProjectBySlug(slug)`. Each project: `id`, `slug`, `label`, `color`, `expandedLabelColor`, `client`, `year`, `title`, `description`, `role`, `tools`, `caseStudyUrl`, `imageSrc`.
+- `src/data/case-studies/racs.js` — RACS content: hero, impact, context, keyInsight, problem, usersAndConstraints, myRole, designChallenges, tradeoffs, designHighlights, impactAndOutcomes, reflection.
+
+### Nav
+
+- `position: fixed`, transparent background, `padding` uses `--page-padding-x` to align with page content
+- White pill container for nav links (unchanged)
+- Page content offset by `--nav-height: 64px` via `calc()` in `padding-top` on `.page-layout` and `.cs-hero`
+- `html, body { background: transparent }` — no white bleed behind fixed nav
 
 ---
 
@@ -116,60 +94,42 @@ All four files complete:
 
 | Decision | Rationale |
 |---|---|
-| Google Fonts for both Geist + Lora | User confirmed — single `@import` |
-| Nav font size 14px | User decision after testing 16px |
-| Wordmark: clamp(14–18px), semibold, -1px tracking | Confirmed from Figma |
-| Wordmark color: `ink-muted` | Figma shows #717171 — closest token |
-| `overflow: hidden` on `.panel-clip` | Allows mascot to escape panel bounds |
-| `useIsDesktop()` JS hook | Prevents hover animations at narrow browser widths |
-| `getPanelTokens()` takes color hex | Color is single source of truth |
-| Default expanded panel: last (index 3) | Per user request |
-| No nav dots in expanded panel | Removed per user request |
-| Nav links in rounded-rectangle container | User changed from pill to rounded-rect |
-| Full-bleed footer border | Negative margins cancel page padding |
-| Above-fold layout desktop only | Mobile/tablet scrolls normally |
-| Panel labels bottom-aligned via JS | Consistent visual baseline across all label lengths |
-| Custom cursor replaces nav hover background | Cursor IS the hover interaction |
-| `mix-blend-mode: difference` on cursor grow | Text remains readable through expanded cursor |
-| Hero annotations split per line | Line 1 → annotation 1, line 2 → annotation 2 |
-| `isHome` prop on Nav | Enables per-page wordmark hover control without hardcoding |
-| No translate on active nav link or home wordmark | Active items shouldn't suggest clickability |
-| Hero grid layout with explicit placement | Flex columns caused alignment issues; grid with `align-items: center` keeps annotations aligned with hero lines |
-| Annotation reveal: `@keyframes` clip-path wipe | CSS transitions unreliable from hidden state; keyframes always play fresh |
-| Brush stroke removed | Per user request |
-| Hero line 2: Lora regular, clamp(28–46px), -1px tracking, ink-tertiary | Per user request — subtler than line 1 |
-| Annotation font: clamp(15–18px), line-height 1.3, ink-primary | Reduced from 20px; tighter line-height prevents row height shift in grid |
-| Annotations as pull quotes with accent bar | Lora italic + 3px green bar — editorial callout style |
-| Semibold keywords in annotations | "3+ years", "7,000+ surgeons", "Claude Code" — upright for emphasis |
-| Stacked card accordion: negative margin overlap | Creates layered card look; collapsed-w 80px covers expanded panel's rounded edge |
-| Collapsed hover: translateX instead of width | No layout shift — expanded panel content stays still |
-| Mascot removed temporarily | Will be re-added later per user request |
-| Collapsed panels: left corners only rounded | Reinforces stacked card metaphor |
-| Framer-style cursor: `translate(-50%, -50%) translate3d()` | Centering in transform eliminates margin changes during grow/shrink |
-| Two-layer cursor hiding | Inline `!important` on `<html>` + stylesheet for maximum specificity |
-| Content column right padding: clamp(48–140px) | Narrower text area for better readability |
-| `--hero-gap` reduced to clamp(24–48px) | Was clamp(48–96px) — too much space between hero and accordion |
-| Hero row-gap 8px, align-items center | Tighter headline pair; annotations vertically center with their hero line |
-| Custom cursor guarded by `(pointer: fine)` | Touch/stylus users keep system cursor; dynamic via matchMedia listener |
-| Cursor uses event delegation | `mouseover`/`mouseout` on document — survives React re-renders, no stale bindings |
-| Cursor hide style via useEffect cleanup | Reversible — no permanently leaked global `cursor: none` |
-| Expanded panel watermark label | Same ResizeObserver bottom-alignment as collapsed labels, pinned right |
-| Per-panel `expandedLabelColor` at 40% opacity | Hue-matched to panel color, acts as subtle watermark without competing with content |
-| Panel press: `:active` scale(0.98) | 80ms snap gives tactile press feedback on collapsed panels |
-| Direction-aware image slide via `@keyframes` | `dir-left`/`dir-right` class on accordion — keyframes always start from correct position, avoiding stale transition values when jumping non-adjacent panels |
-| Content stagger on expand | Each child slides up 10px + fades in, 60ms apart starting at 250ms delay |
-| Image column slides in from navigation direction | Reinforces spatial model; slides from left or right depending on which panel was clicked |
+| Google Fonts for Geist + Lora | Single `@import` |
+| Nav `position: fixed`, transparent | Floats over page — cream shows on home, panel color shows on case study |
+| `--nav-height: 64px` offset on page content | Prevents content hiding under fixed nav |
+| `html, body { background: transparent }` | Removes Tailwind base white — pages control their own background |
+| Nav links white pill retained | Only the nav bar background is transparent, not the pill |
+| WAAPI for page transition | No React state / phase switching = no jank at phase boundary |
+| Overlay stays after navigate, fades out | Prevents flash of homepage during React route render |
+| Two-phase expansion: horizontal then vertical | Natural "panel growing to fill page" feel |
+| Hero content entrance at 420ms | Synced to overlay fade (100ms + 300ms); content appears as color fills |
+| `hasInteracted` state on accordion | Prevents image slide animation on page load — only fires after first click |
+| Image visible on load without animation | `:not(.dir-left):not(.dir-right)` rule shows image at full opacity immediately |
+| `ResizeObserver` on span + parent | Catches clamp font-size changes during resize, not just panel height changes |
+| `requestAnimationFrame` wrap on measure | Reads dimensions after browser layout pass completes on resize |
+| Accordion `max-height: 400px`, `margin-top: auto` | Caps accordion size; pushes it toward footer |
+| Footer `margin-top: var(--space-6)` | Replaces `margin-top: auto` — footer no longer floats to bottom |
+| Hero line 1 letter-spacing -1px below 1200px | Smaller font size needs less aggressive tracking |
+| Annotation `align-self: end` | Bottom-aligns annotations with their hero line in the grid |
+| Collapsed panels: all corners rounded | Per user request |
+| Direction-aware image slide via `@keyframes` | `dir-left`/`dir-right` class — keyframes always start from correct position |
 | Panel `box-shadow: -4px 0 12px` | Left-facing shadow gives depth between overlapping cards |
-| Expanded label offset `right: calc(collapsed-w - 32px)` | Keeps watermark visible regardless of how many panels overlap on the right |
+| Two label elements per panel | Separate collapsed + expanded labels — no transition needed |
+| Per-panel `expandedLabelColor` at 40% opacity | Hue-matched muted watermark |
+| Content stagger on expand | 60ms stagger, 250ms base delay, slide up 10px + fade |
+| Shared `Layout.jsx` with persistent nav | Nav survives route changes |
+| Case study hero image left, content right | Matches accordion panel layout — smooth visual continuity |
+| Hero sections stagger in at mount | Mirrors accordion expand animation for consistency |
 
 ---
 
 ## Remaining work
 
-- Real mockup images for panels 1 (Design system), 2 (Airpals), 3 (Chatbot) — only RACS image added so far
+- Real mockup images for panels 0 (Design system), 1 (Airpals), 2 (Chatbot) — only RACS image added
+- Case study content for Airpals, Travel AI, Design System
 - Mobile accordion layout polish
-- No routing yet (nav links are plain `<a>` hrefs)
-- Case study pages not built
+- About, Contact, Resume, Projects pages (nav links currently go nowhere)
+- Favicon, OG meta tags
 
 ---
 
@@ -177,5 +137,5 @@ All four files complete:
 
 ```bash
 npm install
-npm run dev   # → http://localhost:5173 (or next available port)
+npm run dev   # → http://localhost:5175 (or next available port)
 ```

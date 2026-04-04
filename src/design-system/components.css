@@ -25,11 +25,15 @@
    ============================================================= */
 
 .nav-bar {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: clamp(var(--space-10), 5vw, var(--space-20));
+  padding: clamp(var(--space-4), 2vw, var(--space-6)) var(--page-padding-x);
+  background: transparent;
 }
 
 .nav-wordmark {
@@ -168,7 +172,7 @@
 
 .page-layout {
   background: var(--color-cream-base);
-  padding-top: var(--page-padding-top);
+  padding-top: calc(var(--nav-height) + var(--page-padding-top));
   padding-left: var(--page-padding-x);
   padding-right: var(--page-padding-x);
   min-height: 100dvh;
@@ -177,7 +181,7 @@
 }
 
 .page-footer {
-  margin-top: auto; /* always pushed to bottom regardless of content height */
+  margin-top: var(--space-6);
 }
 
 @media (min-width: 1024px) {
@@ -202,6 +206,10 @@
   column-gap: var(--hero-column-gap);
   row-gap: var(--space-2);
   align-items: center;
+}
+
+.hero-section .annotation {
+  align-self: end;
 }
 
 
@@ -302,8 +310,9 @@
   }
 
   .accordion-wrapper {
-    margin-top: var(--hero-gap);
+    margin-top: auto;
     margin-bottom: var(--space-6);
+    max-height: 400px;
   }
 }
 
@@ -327,20 +336,51 @@
   flex-shrink: 1;
 }
 
+/* Hover bar — appears at top of collapsed panel */
+.accordion-panel::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.7);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.accordion-panel.is-expanded::after {
+  display: none;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .accordion-panel {
     transition: width var(--duration-accordion) var(--easing-accordion),
                 transform 200ms ease-out;
   }
 
+  .accordion-panel::after {
+    transition: opacity 200ms ease-out;
+  }
+
   .accordion-panel:hover:not(.is-expanded) {
-    transform: translateX(calc(var(--accordion-radius) * -1));
+    transform: translateY(-3px);
+    box-shadow: -6px 6px 20px rgba(0, 0, 0, 0.22);
+  }
+
+  .accordion-panel:hover:not(.is-expanded)::after {
+    opacity: 1;
   }
 
   .accordion-panel:active:not(.is-expanded) {
-    transform: translateX(calc(var(--accordion-radius) * -1)) scale(0.98);
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: -4px 2px 10px rgba(0, 0, 0, 0.18);
     transition: width var(--duration-accordion) var(--easing-accordion),
-                transform 80ms ease-out;
+                transform 80ms ease-out,
+                box-shadow 80ms ease-out;
   }
 }
 
@@ -424,7 +464,13 @@
     transition: opacity 150ms ease-out;
   }
 
-  /* Expand: keyframe animation so direction is always correct
+  /* On page load (no direction class yet) — show image immediately, no animation */
+  .accordion:not(.dir-left):not(.dir-right) .accordion-panel.is-expanded .panel-image-col {
+    opacity: 1;
+    transition: none;
+  }
+
+  /* After interaction — keyframe animation so direction is always correct
      (transitions animate from stale computed values; keyframes don't) */
   .accordion.dir-left .accordion-panel.is-expanded .panel-image-col {
     animation: image-slide-left 500ms cubic-bezier(0.22, 1, 0.36, 1) 200ms both;
@@ -454,6 +500,7 @@
     transform: none;
   }
 }
+
 
 /* =============================================================
    PANEL LABEL — unified collapsed/expanded
