@@ -215,9 +215,17 @@
     overflow: hidden;
   }
 
-  .accordion-wrapper {
+  .site-layout--home .page-layout::before {
+    content: '';
+    display: block;
     flex: 1;
     min-height: 0;
+  }
+
+  .accordion-wrapper {
+    height: 400px;
+    margin-top: var(--hero-gap);
+    margin-bottom: var(--space-10);
   }
 }
 
@@ -233,9 +241,6 @@
   align-items: center;
 }
 
-.hero-section .annotation {
-  align-self: end;
-}
 
 
 @media (max-width: 767px) {
@@ -334,11 +339,6 @@
     margin-top: 0; /* gap handled by accordion-wrapper flex spacing */
   }
 
-  .accordion-wrapper {
-    margin-top: auto;
-    margin-bottom: var(--space-6);
-    max-height: 400px;
-  }
 }
 
 /* ── Panel shell ── */

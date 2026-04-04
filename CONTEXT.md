@@ -88,6 +88,16 @@ Single WAAPI animation — no React state, no phase switching:
 - Page content offset by `--nav-height: 64px` via `calc()` in `padding-top` on `.page-layout` and `.cs-hero`
 - `html, body { background: transparent }` — no white bleed behind fixed nav
 
+### Layout (`src/Layout.jsx`)
+
+- Wraps all pages in `.site-layout` (flex column, `min-height: 100dvh`)
+- `.site-layout--home` on desktop: `height: 100dvh; overflow: hidden` — keeps home page non-scrolling
+- `.page-layout` is now `flex: 1; overflow: hidden` — fills remaining space inside `.site-layout`
+- `<Footer />` rendered here — persistent across all routes (like nav)
+- Footer stacks vertically on mobile (<640px), horizontal `space-between` at 640px+
+- Footer text uses clamp tokens: `--size-footer-email: clamp(12px, 1.1vw, 15px)`, `--size-footer-meta: clamp(11px, 0.9vw, 12px)`
+- `Dot` component kept in `HomePage.jsx` (used with color prop in accordion panel client/year line)
+
 ---
 
 ## Decisions made
@@ -120,6 +130,10 @@ Single WAAPI animation — no React state, no phase switching:
 | Shared `Layout.jsx` with persistent nav | Nav survives route changes |
 | Case study hero image left, content right | Matches accordion panel layout — smooth visual continuity |
 | Hero sections stagger in at mount | Mirrors accordion expand animation for consistency |
+| Footer moved to `Layout.jsx` | Persistent on all pages — same pattern as nav |
+| `.site-layout` wrapper with `--home` modifier | Desktop home needs `height: 100dvh; overflow: hidden`; other pages scroll freely |
+| Footer responsive stacking at 640px | Mobile: column layout. 640px+: space-between row |
+| `Dot` kept local in `HomePage.jsx` | Used with `color` prop in accordion — Layout's `Dot` is fixed cream color only |
 
 ---
 

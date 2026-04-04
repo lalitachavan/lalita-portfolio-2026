@@ -78,7 +78,6 @@ p {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-hero);
   color: var(--color-ink-primary);
-  padding-top: var(--space-6);
 }
 
 @media (max-width: 1199px) {
@@ -94,7 +93,6 @@ p {
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-ink-tertiary);
-  padding-bottom: var(--space-2);
 }
 
 /* =============================================================
