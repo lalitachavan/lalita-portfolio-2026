@@ -95,6 +95,8 @@
   --size-panel-cta:    12px;
   --size-body:         15px;
   --size-caption:      12px;
+  --size-footer-email: clamp(12px, 1.1vw, 15px);
+  --size-footer-meta:  clamp(11px, 0.9vw, 12px);
   --size-label:        11px;
 
   /* -----------------------------------------------------------

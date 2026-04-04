@@ -460,85 +460,8 @@ function Hero() {
 }
 
 // =============================================================
-// FOOTER
+// HELPERS
 // =============================================================
-
-function MailIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="var(--color-ink-primary)"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      style={{ flexShrink: 0 }}
-    >
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="M2 7 L12 13 L22 7" />
-    </svg>
-  )
-}
-
-function Footer() {
-  return (
-    <footer
-      className="page-footer"
-      style={{
-        marginLeft: 'calc(var(--page-padding-x) * -1)',
-        marginRight: 'calc(var(--page-padding-x) * -1)',
-        paddingTop: 'var(--space-3)',
-        paddingBottom: 'var(--space-3)',
-        paddingLeft: 'var(--page-padding-x)',
-        paddingRight: 'var(--page-padding-x)',
-        borderTop: '1px solid var(--border-color-default)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
-      {/* Left — email */}
-      <a
-        href="mailto:a4.lalita.chavan@gmail.com"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-3)',
-          fontFamily: 'var(--font-sans)',
-          fontSize: 'var(--size-body)',
-          fontWeight: 'var(--weight-regular)',
-          color: 'var(--color-ink-primary)',
-          textDecoration: 'none',
-        }}
-        className="focus-light"
-      >
-        <MailIcon />
-        a4.lalita.chavan@gmail.com
-      </a>
-
-      {/* Right — credits */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'var(--space-3)',
-          fontFamily: 'var(--font-sans)',
-          fontSize: 'var(--size-caption)',
-          color: 'var(--color-ink-secondary)',
-        }}
-      >
-        <span>2026</span>
-        <Dot />
-        <span>Designed by Lalita</span>
-        <Dot />
-        <span>Built with Claude Code</span>
-      </div>
-    </footer>
-  )
-}
 
 function Dot({ color = 'var(--color-ink-muted)' }) {
   return (
@@ -571,7 +494,6 @@ export default function HomePage() {
       <div className="accordion-wrapper">
         <Accordion />
       </div>
-      <Footer />
     </main>
   )
 }
