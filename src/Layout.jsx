@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 
 const navLinks = [
@@ -10,12 +10,92 @@ const navLinks = [
   { label: 'LinkedIn', href: 'https://linkedin.com/in/lalitachavan', external: true },
 ]
 
+
+function MouseTrail() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx    = canvas.getContext('2d')
+    canvas.width  = window.innerWidth
+    canvas.height = window.innerHeight
+
+    let color  = '#D0D535' // default: green panel (panel 3 is active on load)
+    let drops  = []
+    let lastX  = null, lastY = null, lastT = null
+    let rafId
+
+    const MIN_DIST  = 8
+    const MAX_ALPHA = 0.65
+    const FADE      = 0.013 // ~50 frames to vanish at 60fps
+
+    const onPanelColor = (e) => { color = e.detail.color }
+
+    const onMouseMove = (e) => {
+      const x = e.clientX, y = e.clientY, t = performance.now()
+      if (lastX !== null) {
+        const dx = x - lastX, dy = y - lastY
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist >= MIN_DIST) {
+          const speed  = dist / ((t - lastT) || 1)       // px/ms
+          const radius = Math.max(3, Math.min(20, speed * 8))
+          drops.push({ x, y, radius, alpha: MAX_ALPHA, color })
+          lastX = x; lastY = y; lastT = t
+        }
+      } else {
+        lastX = x; lastY = y; lastT = t
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      drops = drops.filter(d => d.alpha > 0)
+      for (const d of drops) {
+        const r = parseInt(d.color.slice(1, 3), 16)
+        const g = parseInt(d.color.slice(3, 5), 16)
+        const b = parseInt(d.color.slice(5, 7), 16)
+        ctx.beginPath()
+        ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${r},${g},${b},${d.alpha.toFixed(3)})`
+        ctx.fill()
+        d.alpha -= FADE
+      }
+      rafId = requestAnimationFrame(draw)
+    }
+
+    const onResize = () => {
+      canvas.width  = window.innerWidth
+      canvas.height = window.innerHeight
+    }
+
+    draw()
+    window.addEventListener('mousemove',    onMouseMove)
+    window.addEventListener('panel-color',  onPanelColor)
+    window.addEventListener('resize',       onResize)
+    return () => {
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('mousemove',   onMouseMove)
+      window.removeEventListener('panel-color', onPanelColor)
+      window.removeEventListener('resize',      onResize)
+    }
+  }, [])
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{ position: 'fixed', top: 0, left: 0, pointerEvents: 'none', zIndex: 0 }}
+    />
+  )
+}
+
 export default function Layout({ children }) {
   const location = useLocation()
   const isHome = location.pathname === '/'
 
   return (
     <div className={`site-layout${isHome ? ' site-layout--home' : ''}`}>
+      <MouseTrail />
       <Nav isHome={isHome} />
       {children}
       <Footer />

@@ -9,7 +9,22 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+html {
   background: transparent;
+}
+
+body {
+  background: var(--color-cream-base);
+}
+
+.page-layout,
+.page-footer {
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-bar {
+  z-index: 100;
 }
 

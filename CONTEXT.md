@@ -24,15 +24,15 @@ Update it at the end of every session.
 
 **Hero**
 - CSS Grid: 2 columns (`auto 1fr`), 2 rows, `row-gap: var(--space-2)`, `align-items: center`
-- Line 1: Geist regular, clamp(24–36px), `-2px` tracking (drops to -1px below 1200px), `padding-top: var(--space-6)`
-- Line 2: Lora regular, clamp(20–30px), `-1px` tracking, `padding-bottom: var(--space-2)`, `ink-tertiary`
-- Annotations: Lora italic, clamp(14–16px), `--leading-snug`, `ink-secondary`, 3px `accent-brush` left bar, `align-self: end` (bottom-aligned in their grid row)
+- Line 1: Geist regular, clamp(24–36px), `-2px` tracking (drops to -1px below 1200px). No padding.
+- Line 2: Lora regular, clamp(20–30px), `-1px` tracking, `ink-tertiary`. No padding.
+- Annotations: Lora italic, clamp(14–16px), `--leading-snug`, `ink-secondary`, 3px `accent-brush` left bar. Center-aligned in their grid row (matches hero lines — no `align-self` override).
 - Annotation reveal: `@keyframes annotation-wipe` clip-path wipe, 400ms. Mobile: always visible.
 
 **Accordion**
 - 4 panels: Design system (orange), Usability study (magenta), Chatbot design (yellow), Mobile-first design (green)
 - Default expanded: last panel (green)
-- Desktop max-height: 400px, pushed toward footer via `margin-top: auto`
+- Desktop height: 400px fixed. `margin-top: var(--hero-gap)` gap from hero, `margin-bottom: var(--space-10)` gap to footer.
 - Stacked card overlap: `margin-left: calc(--accordion-radius * -1)`, `z-index: index + 1`
 - All corners rounded on all panels (`var(--accordion-radius)`)
 - `overflow: hidden` on `.panel-clip` inside each panel
@@ -98,6 +98,20 @@ Single WAAPI animation — no React state, no phase switching:
 - Footer text uses clamp tokens: `--size-footer-email: clamp(12px, 1.1vw, 15px)`, `--size-footer-meta: clamp(11px, 0.9vw, 12px)`
 - `Dot` component kept in `HomePage.jsx` (used with color prop in accordion panel client/year line)
 
+### Mouse trail (`MouseTrail` in `src/Layout.jsx`)
+
+- Canvas fixed full-viewport, `z-index: 0`, `pointer-events: none` — sits in background
+- Draws fading circles at cursor positions as the mouse moves; circle radius scales with cursor speed (faster = larger, min 3px, max 20px)
+- Trail fades out over ~50 frames (alpha 0.65 → 0 at 0.013/frame)
+- Circles painted in the currently expanded accordion panel's color
+- Color communicated via `window` CustomEvent `panel-color` dispatched from `Accordion.selectPanel` and on mount
+- Default color: `#D0D535` (green — panel 3 is active on load)
+
+**Stacking context fixes in `src/index.css`** (required for background canvas):
+- `body { background: var(--color-cream-base) }` — cream moved from `.page-layout` to body
+- `.page-layout`, `.page-footer { background: transparent; position: relative; z-index: 1 }` — makes content sit above canvas
+- `.nav-bar { z-index: 100 }` — nav was `position: fixed` with no z-index (auto), which placed it below the z-index: 1 page-layout and broke hover; explicit 100 fixes it
+
 ---
 
 ## Decisions made
@@ -107,7 +121,7 @@ Single WAAPI animation — no React state, no phase switching:
 | Google Fonts for Geist + Lora | Single `@import` |
 | Nav `position: fixed`, transparent | Floats over page — cream shows on home, panel color shows on case study |
 | `--nav-height: 64px` offset on page content | Prevents content hiding under fixed nav |
-| `html, body { background: transparent }` | Removes Tailwind base white — pages control their own background |
+| `html { background: transparent }`, `body { background: cream-base }` | Cream moved to body so canvas at z-index: 0 shows through transparent page-layout |
 | Nav links white pill retained | Only the nav bar background is transparent, not the pill |
 | WAAPI for page transition | No React state / phase switching = no jank at phase boundary |
 | Overlay stays after navigate, fades out | Prevents flash of homepage during React route render |
@@ -118,9 +132,9 @@ Single WAAPI animation — no React state, no phase switching:
 | `ResizeObserver` on span + parent | Catches clamp font-size changes during resize, not just panel height changes |
 | `requestAnimationFrame` wrap on measure | Reads dimensions after browser layout pass completes on resize |
 | Accordion `max-height: 400px`, `margin-top: auto` | Caps accordion size; pushes it toward footer |
-| Footer `margin-top: var(--space-6)` | Replaces `margin-top: auto` — footer no longer floats to bottom |
+| Hero+accordion grouped via `::before` flex spacer on `.page-layout` | `::before { flex: 1 }` absorbs free space above hero, pushing hero+accordion as a group toward the lower portion of viewport. Accordion has explicit `height: 400px` since `height: 100%` needs a defined parent height. |
 | Hero line 1 letter-spacing -1px below 1200px | Smaller font size needs less aggressive tracking |
-| Annotation `align-self: end` | Bottom-aligns annotations with their hero line in the grid |
+| Hero grid `align-items: center`, no `align-self` on annotations | Both hero lines and annotations center in their row — removed `align-self: end` as it caused misalignment when annotation wrapped |
 | Collapsed panels: all corners rounded | Per user request |
 | Direction-aware image slide via `@keyframes` | `dir-left`/`dir-right` class — keyframes always start from correct position |
 | Panel `box-shadow: -4px 0 12px` | Left-facing shadow gives depth between overlapping cards |
@@ -134,6 +148,40 @@ Single WAAPI animation — no React state, no phase switching:
 | `.site-layout` wrapper with `--home` modifier | Desktop home needs `height: 100dvh; overflow: hidden`; other pages scroll freely |
 | Footer responsive stacking at 640px | Mobile: column layout. 640px+: space-between row |
 | `Dot` kept local in `HomePage.jsx` | Used with `color` prop in accordion — Layout's `Dot` is fixed cream color only |
+
+---
+
+## Future plans
+
+### Vertical stacked cards (accordion redesign)
+
+Replace horizontal accordion with vertically stacked cards for better accessibility.
+
+**Layout change**
+- `.accordion` switches from `flex-direction: row` to `flex-direction: column`
+- Overlap switches from `margin-left: negative` to `margin-top: negative`
+- `box-shadow` flips from left-facing to top-facing
+- Remove fixed `height: 400px` on `.accordion-wrapper` — natural height + `max-height` safety valve
+
+**Collapsed card**
+- Full width, fixed height (~60px)
+- Label sits horizontally: project name left, category tag right — no more rotated label
+- Remove `PanelLabel` with `ResizeObserver` — replace with simple flexbox header
+- Keep `ExpandedPanelLabel` watermark (right edge, works vertically as-is)
+
+**Expanded card**
+- Grows in height via `flex: 1` (same mechanic as current, just vertical)
+- Image left / content right layout unchanged
+- Content stagger animation unchanged
+
+**Keyboard nav**
+- Arrow Left/Right → Arrow Up/Down
+
+**What stays untouched**
+- All panel content, colors, tokens
+- `PanelImage`, image slide animation, `hasInteracted` gate
+- `expandToPage` page transition
+- ARIA roles (`tablist`, `tab`, `tabpanel`)
 
 ---
 

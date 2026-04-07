@@ -216,11 +216,19 @@ function Accordion() {
   const [hasInteracted, setHasInteracted] = useState(false)
   const tabRefs = useRef([])
 
+  // Broadcast initial color on mount
+  useEffect(() => {
+    const initial = panels.find(p => p.id === panels.length - 1)
+    if (initial) window.dispatchEvent(new CustomEvent('panel-color', { detail: { color: initial.color } }))
+  }, [])
+
   function selectPanel(nextId) {
     setHasInteracted(true)
     setDirection(nextId > prevPanelRef.current ? 'right' : 'left')
     prevPanelRef.current = nextId
     setActivePanel(nextId)
+    const panel = panels.find(p => p.id === nextId)
+    if (panel) window.dispatchEvent(new CustomEvent('panel-color', { detail: { color: panel.color } }))
   }
 
   function handleKeyDown(e, index) {
