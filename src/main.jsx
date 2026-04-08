@@ -1,6 +1,6 @@
 import { StrictMode, useRef, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import './index.css'
 import HomePage from './HomePage'
 import CaseStudyPage from './CaseStudyPage'
@@ -11,6 +11,7 @@ const INTERACTIVE = 'a, button, [role="tab"], [role="button"], .hero-line-1, .he
 
 function CursorDot() {
   const dotRef = useRef(null)
+  const location = useLocation()
   const [hasFinePointer, setHasFinePointer] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches
   )
@@ -22,6 +23,16 @@ function CursorDot() {
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
+
+  // Reset dot size on route change (cursor may be stuck enlarged from a hovered link)
+  useEffect(() => {
+    const dot = dotRef.current
+    if (!dot) return
+    dot.style.width = '16px'
+    dot.style.height = '16px'
+    dot.style.mixBlendMode = 'normal'
+    dot.style.background = 'var(--color-ink-primary)'
+  }, [location.pathname])
 
   // Hide system cursor only when fine pointer is available
   useEffect(() => {

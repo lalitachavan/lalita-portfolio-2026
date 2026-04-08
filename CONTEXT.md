@@ -50,6 +50,7 @@ Update it at the end of every session.
 - Guarded by `(pointer: fine)`, event delegation on document
 - Hover state: grows to 40px, white, `mix-blend-mode: difference`
 - Expanded panel excluded from cursor grow
+- Resets to default 16px size on route change (prevents stuck-enlarged state after navigation)
 
 **Footer**
 - `margin-top: var(--space-6)`, full-bleed border, email + credits
@@ -101,11 +102,12 @@ Single WAAPI animation — no React state, no phase switching:
 ### Mouse trail (`MouseTrail` in `src/Layout.jsx`)
 
 - Canvas fixed full-viewport, `z-index: 0`, `pointer-events: none` — sits in background
-- Draws fading circles at cursor positions as the mouse moves; circle radius scales with cursor speed (faster = larger, min 3px, max 20px)
+- Draws fading circles at cursor positions as the mouse moves; circle radius scales with cursor speed (faster = larger, min 3px, max 10px / 20px diameter)
 - Trail fades out over ~50 frames (alpha 0.65 → 0 at 0.013/frame)
 - Circles painted in the currently expanded accordion panel's color
 - Color communicated via `window` CustomEvent `panel-color` dispatched from `Accordion.selectPanel` and on mount
 - Default color: `#D0D535` (green — panel 3 is active on load)
+- Only rendered on the homepage (`/`) — not on case study or other pages
 
 **Stacking context fixes in `src/index.css`** (required for background canvas):
 - `body { background: var(--color-cream-base) }` — cream moved from `.page-layout` to body

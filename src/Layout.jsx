@@ -38,7 +38,7 @@ function MouseTrail() {
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist >= MIN_DIST) {
           const speed  = dist / ((t - lastT) || 1)       // px/ms
-          const radius = Math.max(3, Math.min(20, speed * 8))
+          const radius = Math.max(3, Math.min(10, speed * 8))
           drops.push({ x, y, radius, alpha: MAX_ALPHA, color })
           lastX = x; lastY = y; lastT = t
         }
@@ -95,7 +95,7 @@ export default function Layout({ children }) {
 
   return (
     <div className={`site-layout${isHome ? ' site-layout--home' : ''}`}>
-      <MouseTrail />
+      {isHome && <MouseTrail />}
       <Nav isHome={isHome} />
       {children}
       <Footer />
